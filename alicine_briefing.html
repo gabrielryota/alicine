@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALICINE — Assistente de Produção Audiovisual</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#12110f;--ink2:#56534a;--ink3:#9e9b92;
+  --paper:#f8f6f1;--paper2:#efecea;--paper3:#e2ddd6;
+  --ali:#8b5cf6;--ali2:#ede9fe;--ali3:#c4b5fd;
+  --green:#16a34a;--amber:#b45309;--red:#dc2626;
+  --r:6px;--rm:10px;--rl:16px;
+}
+html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);}
+
+header{
+  border-bottom:1px solid var(--paper3);
+  padding:0 28px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--paper);position:sticky;top:0;z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-icon{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--ali);display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#fff;
+}
+.brand-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:500;color:var(--ink);}
+.brand-sub{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);margin-top:1px;}
+.prog-wrap{flex:1;max-width:180px;margin-left:2rem;}
+.prog-bar{height:2px;background:var(--paper3);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--ali);border-radius:2px;transition:width 0.4s ease;width:0%;}
+.prog-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);margin-top:4px;}
+
+.chat{width:100%;max-width:680px;margin:0 auto;padding:2rem 1.5rem 6rem;display:flex;flex-direction:column;gap:1rem;}
+
+.msg{animation:fadeUp 0.25s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* bot messages */
+.bot-row{display:flex;align-items:flex-start;gap:10px;}
+.bot-avatar{
+  width:30px;height:30px;border-radius:50%;background:var(--ali);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:#fff;
+  flex-shrink:0;margin-top:2px;
+}
+.bot-bubble{
+  background:var(--paper2);border:1px solid var(--paper3);
+  border-radius:0 var(--rl) var(--rl) var(--rl);
+  padding:16px 20px;font-size:15px;line-height:1.75;
+  color:var(--ink);flex:1;
+}
+.bot-bubble b{font-weight:500;}
+.bot-bubble em{font-style:italic;color:var(--ink2);}
+
+.edu-note{
+  margin-top:12px;padding:12px 15px;
+  background:var(--ali2);border-radius:var(--r);
+  font-size:13.5px;line-height:1.65;color:#4c1d95;
+  border-left:3px solid var(--ali3);
+}
+
+/* user messages */
+.user-msg{display:flex;justify-content:flex-end;}
+.user-bubble{
+  background:var(--ink);color:var(--paper);
+  border-radius:var(--rl) 0 var(--rl) var(--rl);
+  padding:12px 18px;font-size:14.5px;line-height:1.55;max-width:78%;
+}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.opt{
+  background:var(--paper);border:1px solid var(--paper3);
+  border-radius:var(--rm);padding:13px 16px;
+  font-size:14.5px;color:var(--ink);cursor:pointer;
+  text-align:left;transition:all 0.15s;
+  display:flex;flex-direction:column;gap:3px;
+}
+.opt:hover{border-color:var(--ali3);background:var(--ali2);}
+.opt.sel{border-color:var(--ali);background:var(--ali2);}
+.opt-title{font-weight:500;font-size:14.5px;}
+.opt-desc{font-size:13px;color:var(--ink2);line-height:1.5;}
+.opt-impact{font-size:12px;font-family:'DM Mono',monospace;color:var(--amber);margin-top:2px;}
+.opt.sel .opt-desc{color:#4c1d95;}
+.opt.sel .opt-impact{color:var(--ali);}
+
+.react-zone{
+  margin-top:12px;padding:13px 16px;
+  background:var(--paper);border:1px solid var(--paper3);
+  border-radius:var(--rm);font-size:14px;line-height:1.65;
+  color:var(--ink2);display:none;
+}
+.react-zone.show{display:block;animation:fadeUp 0.2s ease;}
+.react-zone strong{color:var(--ink);font-weight:500;}
+
+.confirm-btn{
+  margin-top:12px;padding:12px 24px;
+  background:var(--ali);color:#fff;
+  border:none;border-radius:var(--rm);
+  font-size:14.5px;font-family:'DM Sans',sans-serif;font-weight:500;
+  cursor:pointer;display:none;transition:opacity 0.15s;
+}
+.confirm-btn:hover{opacity:0.88;}
+.confirm-btn.show{display:inline-block;}
+
+.text-wrap{margin-top:12px;}
+.text-wrap textarea,.text-wrap input{
+  width:100%;padding:12px 15px;
+  font-size:14.5px;font-family:'DM Sans',sans-serif;
+  border:1px solid var(--paper3);border-radius:var(--rm);
+  background:var(--paper);color:var(--ink);
+  resize:vertical;line-height:1.65;transition:border-color 0.15s;
+}
+.text-wrap textarea{min-height:80px;}
+.text-wrap textarea:focus,.text-wrap input:focus{outline:none;border-color:var(--ali3);}
+
+/* result */
+.result-card{background:var(--paper);border:1px solid var(--paper3);border-radius:var(--rl);padding:1.5rem;margin-top:10px;}
+.r-brand{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;}
+.r-brand-icon{width:36px;height:36px;border-radius:50%;background:var(--ali);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#fff;}
+.r-brand-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
+.r-brand-sub{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);}
+.r-title{font-size:18px;font-weight:500;margin-bottom:3px;}
+.r-date{font-size:12px;font-family:'DM Mono',monospace;color:var(--ink3);margin-bottom:1.25rem;}
+.divider{border:none;border-top:1px solid var(--paper3);margin:1.25rem 0;}
+.r-label{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.08em;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;}
+.r-val{font-size:14.5px;color:var(--ink);line-height:1.7;}
+
+.badge{display:inline-block;font-size:12px;padding:3px 11px;border-radius:100px;font-weight:500;margin:2px 3px 2px 0;}
+.badge-purple{background:var(--ali2);color:#4c1d95;}
+.badge-amber{background:#fef3c7;color:#78350f;}
+
+/* prazo cards */
+.prazo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;}
+.prazo-card{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:16px;}
+.prazo-num{font-size:24px;font-weight:300;color:var(--ink);font-family:'DM Mono',monospace;line-height:1.2;}
+.prazo-sub{font-size:12px;color:var(--ink3);margin-top:3px;}
+.prazo-card.destaque{border-color:var(--ali);background:var(--ali2);}
+.prazo-card.destaque .prazo-num{color:var(--ali);}
+.prazo-card.destaque .prazo-sub{color:#6d28d9;}
+
+.gargalo-box{background:#fef3c7;border:1px solid #fcd34d;border-radius:var(--rm);padding:13px 16px;font-size:14px;line-height:1.6;color:#78350f;margin-top:10px;}
+.alert-box{background:#fffbeb;border-left:3px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:11px 15px;font-size:14px;line-height:1.6;color:#78350f;margin-top:8px;}
+.missing-box{background:#fef2f2;border-left:3px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:11px 15px;font-size:14px;line-height:1.6;color:#7f1d1d;margin-top:8px;}
+
+.agenda-ok{background:var(--ali2);border:1px solid var(--ali3);border-radius:var(--rm);padding:12px 15px;font-size:13.5px;color:#4c1d95;margin-top:10px;}
+.agenda-warn{background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--rm);padding:12px 15px;font-size:13.5px;color:#78350f;margin-top:10px;}
+
+.edu-final{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:15px 17px;font-size:14px;line-height:1.75;color:var(--ink2);margin-top:6px;}
+.edu-final strong{color:var(--ink);font-weight:500;}
+
+/* timeline */
+.tl-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--paper3);font-size:13px;}
+.tl-row:last-child{border-bottom:none;}
+.tl-date{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink3);min-width:76px;}
+.tl-bar-wrap{flex:1;height:5px;background:var(--paper3);border-radius:3px;overflow:hidden;}
+.tl-bar{height:100%;background:var(--ali);border-radius:3px;}
+.tl-hrs{font-size:12px;font-family:'DM Mono',monospace;color:var(--ink2);min-width:32px;text-align:right;}
+
+.restart-btn{margin-top:1.5rem;padding:11px 20px;background:transparent;border:1px solid var(--paper3);border-radius:var(--rm);font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--ink3);cursor:pointer;transition:all 0.15s;}
+.restart-btn:hover{border-color:var(--ink3);color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">A</div>
+    <div>
+      <div class="brand-name">ALICINE</div>
+      <div class="brand-sub">assistente virtual de produção audiovisual</div>
+    </div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+    <div class="prog-label" id="step-lbl"></div>
+  </div>
+</header>
+
+<div class="chat" id="app"></div>
+
+<script>
+const KEY='alicine_agenda_v1';
+const TOTAL=9;
+const state={step:0,answers:{},sel:null};
+
+const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const semana=['dom','seg','ter','qua','qui','sex','sáb'];
+
+function loadAgenda(){
+  try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):{};}catch(e){return {};}
+}
+function pad(n){return n<10?'0'+n:''+n;}
+function ds(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtDate(d){return semana[d.getDay()]+', '+d.getDate()+' de '+meses[d.getMonth()];}
+
+function calcEntrega(totalHoras){
+  const agenda=loadAgenda();
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const days=Object.keys(agenda)
+    .filter(k=>new Date(k+'T00:00:00')>=hoje)
+    .sort();
+
+  if(!days.length)return{hasAgenda:false,totalHoras};
+
+  let rem=totalHoras;
+  const usados=[];
+  for(const k of days){
+    if(rem<=0)break;
+    const avail=agenda[k];
+    const used=Math.min(avail,rem);
+    usados.push({k,avail,used});
+    rem-=used;
+  }
+
+  const last=usados[usados.length-1];
+  const endDate=last?new Date(last.k+'T00:00:00'):null;
+  return{
+    hasAgenda:true,totalHoras,
+    daysUsed:usados.length,
+    endDate,endDateStr:endDate?fmtDate(endDate):'—',
+    agendaInsuficiente:rem>0,horasRestantes:Math.round(rem),
+    timeline:usados.slice(0,6),
+    maxAvail:Math.max(...usados.map(u=>u.avail))
+  };
+}
+
+const steps=[
+{id:'nome',type:'text',
+  bot:'Olá! Sou a <b>ALICINE</b>, assistente virtual de produção audiovisual da Ryota.<br><br>Estou aqui para ajudar você a organizar sua demanda de forma clara antes de enviá-la para a produção. Vou fazer algumas perguntas e, ao final, você terá um briefing completo — com estimativa real de quando o projeto pode estar pronto.<br><br>Para começar: qual é o seu nome e sua área?',
+  ph:'Ex: Ana Lima, Marketing Interno'},
+
+{id:'objetivo',type:'textarea',
+  bot:(a)=>`Olá, <b>${fn(a.nome)}</b>! Boa notícia: você já deu o primeiro passo certo ao usar esse canal.<br><br>Me conta agora — qual é o <b>objetivo</b> desse vídeo? O que você quer que quem assistir entenda, sinta ou faça depois de ver?`,
+  ph:'Ex: Mostrar para os colaboradores novos como funciona o processo de onboarding da empresa.',
+  edu:'Essa é a pergunta mais importante do briefing. Um objetivo vago como "apresentar o projeto X" costuma gerar vídeos longos, com mensagem diluída e muito retrabalho depois. Quanto mais claro e específico o objetivo, mais direto fica o vídeo — e menor o prazo de produção.'},
+
+{id:'script',type:'single',
+  bot:'Ótimo. Agora me fala sobre o roteiro — em que estado ele está?',
+  edu:'O roteiro define quanto trabalho intelectual a produção precisa fazer <em>antes</em> de ligar qualquer câmera. Esse fator impacta o prazo às vezes mais do que o formato do vídeo em si.',
+  opts:[
+    {v:'plot',t:'Tenho o roteiro pronto',d:'Está escrito, revisado e aprovado. Só precisa ser gravado e editado.',i:'+ ~1h de preparação'},
+    {v:'core',t:'Tenho a ideia clara',d:'Sei exatamente o que quero dizer, mas ainda não está escrito.',i:'+ 4 a 6h de roteiro'},
+    {v:'creed',t:'Tenho só a necessidade',d:'Sei que preciso de um vídeo, mas o conteúdo ainda não está definido.',i:'+ 1 a 2 dias de roteiro'}
+  ],
+  reacts:{
+    plot:'Ótimo! Roteiro pronto significa que a produção pode focar 100% na execução. O prazo começa mais curto e previsível.',
+    core:'Entendido. A produção vai estruturar o conteúdo a partir da sua ideia — escrever as falas, organizar a narrativa e preparar tudo para a gravação. Isso adiciona algumas horas antes de qualquer coisa ser filmada.',
+    creed:'Tudo bem! Mas é importante que você saiba: a produção vai precisar entender o tema a fundo, propor uma abordagem e escrever tudo do zero. É completamente viável — mas o prazo começa significativamente maior, e o alinhamento inicial vai ser mais longo.'}},
+
+{id:'video',type:'single',
+  bot:'Que tipo de vídeo você está imaginando?',
+  edu:'Cada formato carrega um peso diferente de produção. Não é só sobre a duração — é sobre complexidade técnica, número de etapas e os recursos envolvidos em cada fase.',
+  opts:[
+    {v:'hit',t:'Hit',d:'Até 90 segundos. Câmera parada, 1 ou 2 pessoas falando. Edição direta.',i:'Formato mais leve e rápido'},
+    {v:'flow',t:'Flow',d:'Até 90 segundos. Câmera em movimento, trilha, motion básico.',i:'Leve, com um pouco mais de pós-produção'},
+    {v:'stone',t:'Stone',d:'Até 3 minutos. Múltiplos depoimentos, trilha, motion.',i:'Médio — mais logística e edição'},
+    {v:'cruze',t:'Cruze',d:'Até 3 minutos. Depoimentos com tratamento via protocolo de IA.',i:'Médio-alto — inclui etapa de IA'},
+    {v:'infinity',t:'Infinity',d:'3 minutos ou mais. Sem limite de pessoas, IA completa, escopo aberto.',i:'Alto — maior complexidade'},
+    {v:'cover',t:'Cover',d:'Cobertura de evento ao vivo. Escopo variável.',i:'Variável — requer briefing específico'},
+    {v:'nd',t:'Ainda não sei',d:'Não tenho clareza do formato ideal para o que preciso.',i:'Será definido pela produção'}
+  ],
+  reacts:{
+    hit:'Hit é o formato mais direto da operação. Funciona muito bem para comunicados, apresentações objetivas e mensagens institucionais simples.',
+    flow:'Flow adiciona dinamismo visual. É uma boa escolha quando a mensagem precisa de ritmo ou quando o ambiente faz parte da narrativa.',
+    stone:'Stone é o formato de múltiplas vozes — depoimentos, perspectivas diferentes sobre um tema. A logística de gravação com várias pessoas e o volume de edição aumentam o prazo.',
+    cruze:'Cruze inclui protocolo de IA para tratamento de fala — remoção de vícios de linguagem, pausas longas. Melhora muito a qualidade percebida, mas adiciona uma etapa técnica relevante.',
+    infinity:'Infinity é o formato de maior complexidade da operação. Projetos institucionais densos, documentais internos, campanhas com muitos participantes. O prazo começa em pelo menos uma semana.',
+    cover:'Cobertura de evento tem escopo muito específico. Vou registrar isso e a produção vai alinhar os detalhes diretamente com você.',
+    nd:'Sem problema! A produção vai classificar o formato ideal depois de ler o briefing completo.'}},
+
+{id:'pessoas',type:'single',
+  bot:'Quantas pessoas aparecem no vídeo?',
+  edu:'Cada pessoa que aparece em cena significa agendar disponibilidade, organizar o espaço, tempo extra de captação e mais material para editar. A partir de 3 pessoas, a logística se torna um fator real no prazo.',
+  opts:[
+    {v:'1',t:'1 pessoa',i:'Gravação focada, mais simples de organizar'},
+    {v:'2',t:'2 pessoas',i:'Pequeno ajuste de logística'},
+    {v:'3a5',t:'3 a 5 pessoas',i:'+ 1,5 a 2,5h de captação'},
+    {v:'6+',t:'6 ou mais pessoas',i:'+ 2,5 a 4h — logística relevante'},
+    {v:'none',t:'Nenhuma — só animação ou narração em off',i:'Sem captação presencial'}
+  ],
+  reacts:{
+    '1':'Gravação focada. Mais fácil de organizar e com menos variáveis na edição.',
+    '2':'Dois participantes é tranquilo. Pode ser presencial ou gravado em locais diferentes com edição intercalada.',
+    '3a5':'A partir de 3 pessoas, a logística de agenda começa a pesar. Cada participante precisa estar disponível ao mesmo tempo — ou em sessões separadas, o que fragmenta a captação e aumenta o tempo total.',
+    '6+':'Com 6 ou mais pessoas, na prática você tem um dia inteiro dedicado só à captação. O volume de material para editar também aumenta bastante. É um projeto que precisa de planejamento de produção mais cuidadoso.',
+    'none':'Sem captação presencial, a operação fica muito mais previsível. A produção foca em roteiro, narração e animação.'}},
+
+{id:'motion',type:'single',
+  bot:'O vídeo vai precisar de motion gráfico — animações, textos animados, infográficos, vinhetas elaboradas?',
+  edu:'Motion é um dos modificadores que mais pessoas subestimam. Uma animação que dura 10 segundos na tela pode representar horas de trabalho de design e animação. Quanto mais elaborado, maior o impacto direto no prazo.',
+  opts:[
+    {v:'nao',t:'Não, só edição básica',d:'Cortes, trilha, legenda e créditos simples.',i:'Sem custo adicional'},
+    {v:'simples',t:'Sim, algo simples',d:'Abertura padronizada, lower thirds, fechamento.',i:'+ 2 a 4h'},
+    {v:'elaborado',t:'Sim, algo elaborado',d:'Infográficos animados, transições criativas, elementos visuais complexos.',i:'+ 1 a 2 dias'}
+  ],
+  reacts:{
+    nao:'Edição limpa e direta. Sem custo adicional de tempo.',
+    simples:'Motion simples é o padrão da maioria dos vídeos institucionais. Adiciona profissionalismo sem pesar muito no prazo.',
+    elaborado:'Motion elaborado fica lindo — mas exige tempo real para ser bem-feito. Um infográfico animado ou uma sequência criativa pode facilmente ser o item que mais pesa no prazo total do projeto.'}},
+
+{id:'ia',type:'single',
+  bot:'O vídeo vai precisar de protocolo de IA — remoção de vícios de linguagem, cortes automáticos, avatar ou síntese de voz?',
+  edu:'O protocolo de IA não funciona com um simples apertar de botão. Cada tipo de tratamento exige configuração, revisão cuidadosa e ajustes manuais. É um ganho real de qualidade — mas tem custo de tempo que precisa estar no cálculo.',
+  opts:[
+    {v:'nao',t:'Não precisa',i:'Sem etapa adicional'},
+    {v:'simples',t:'Sim — protocolo simples',d:'Remoção de pausas, vícios de linguagem, cortes de respiração.',i:'+ 1 a 2 dias'},
+    {v:'complexo',t:'Sim — protocolo complexo',d:'Avatar, síntese de voz, múltiplos ajustes finos de fala.',i:'+ 3 dias ou mais'}
+  ],
+  reacts:{
+    nao:'Sem protocolo. A edição segue o fluxo padrão.',
+    simples:'Protocolo simples é muito usado no formato Cruze. Melhora bastante a qualidade percebida — especialmente quando há muitas pausas ou vícios de linguagem. O resultado parece mais fluido sem precisar regravar.',
+    complexo:'Protocolo complexo é para projetos que precisam de avatar ou reconstrução de fala. É tecnicamente sofisticado, exige revisão muito cuidadosa para soar natural. Não é adequado para prazos curtos.'}},
+
+{id:'prazo',type:'single',
+  bot:'Existe alguma data de referência para esse vídeo? Um evento, lançamento ou campanha com data marcada?',
+  opts:[
+    {v:'nao',t:'Não, sem data fixada'},
+    {v:'urgente',t:'Sim — em menos de 3 dias úteis',i:'Prazo crítico'},
+    {v:'curto',t:'Sim — entre 3 e 7 dias úteis',i:'Prazo apertado'},
+    {v:'ok',t:'Sim — mais de 7 dias úteis',i:'Prazo confortável'}
+  ],
+  reacts:{
+    nao:'Sem pressão de data. O prazo será calculado de forma realista a partir do escopo.',
+    urgente:'Menos de 3 dias úteis é um prazo muito crítico para quase qualquer escopo além de um Hit simples com roteiro pronto. Vou registrar esse alerta — a produção precisará confirmar viabilidade antes de qualquer compromisso.',
+    curto:'De 3 a 7 dias é viável para formatos leves com escopo bem definido, mas pode ficar apertado. Vou incluir um alerta se o escopo não couber nessa janela.',
+    ok:'Mais de 7 dias é um horizonte confortável para a maioria dos formatos. Boa base para planejamento.'}},
+
+{id:'obs',type:'textarea',
+  bot:'Última pergunta! Tem alguma informação que ajude a produção a entender melhor o contexto? Locação específica, quem vai aparecer, referência de vídeo, restrição técnica?',
+  ph:'Ex: A gravação precisa ser no auditório da sede. A apresentadora é a Fernanda Alves, gerente de RH. Referência: tom do vídeo de onboarding da Netflix.',
+  edu:'Quanto mais contexto, mais preciso o planejamento. Informações como locação, pessoa responsável e referências evitam surpresas na gravação e na edição.'}
+];
+
+function fn(n){return n?n.split(/[,\s]/)[0].trim():'';}
+
+function calc(a){
+  let minH=0,maxH=0,alertas=[],faltando=[],gargalo='';
+  if(a.script==='plot'){minH+=1;maxH+=1;}
+  else if(a.script==='core'){minH+=4;maxH+=6;}
+  else if(a.script==='creed'){minH+=8;maxH+=16;alertas.push('O roteiro precisa ser criado do zero. Esse é o item de maior incerteza de prazo nesse projeto.');}
+  const vm={hit:[3,4],flow:[3,6],stone:[16,24],cruze:[32,40],infinity:[40,56],cover:[8,24],nd:[4,8]};
+  const v=vm[a.video]||[4,8];minH+=v[0];maxH+=v[1];
+  if(a.pessoas==='3a5'){minH+=1.5;maxH+=2.5;}
+  else if(a.pessoas==='6+'){minH+=2.5;maxH+=4;alertas.push('Com 6 ou mais pessoas em cena, a logística de gravação equivale a um dia completo de produção.');}
+  if(a.motion==='simples'){minH+=2;maxH+=4;}
+  else if(a.motion==='elaborado'){minH+=8;maxH+=16;alertas.push('Motion elaborado pode ser o modificador mais pesado desse projeto.');}
+  if(a.ia==='simples'){minH+=8;maxH+=16;}
+  else if(a.ia==='complexo'){minH+=24;maxH+=40;alertas.push('Protocolo de IA complexo exige tempo significativo. Não é compatível com prazos curtos.');}
+  minH+=4;maxH+=8;
+  if(a.prazo==='urgente') alertas.push('Prazo de menos de 3 dias úteis é crítico para esse escopo. A produção precisa confirmar viabilidade antes de qualquer compromisso.');
+  else if(a.prazo==='curto') alertas.push('Prazo de 3 a 7 dias pode ser viável, mas depende da agenda e do escopo total. Confirmar com a produção.');
+  if(!a.objetivo||a.objetivo.trim().length<15) faltando.push('O objetivo do vídeo está vago — detalhe melhor o que você quer comunicar.');
+  if(a.video==='nd') faltando.push('Formato de vídeo não definido — a estimativa de prazo ficará em aberto.');
+  if(a.script==='creed'&&(!a.obs||a.obs.trim().length<10)) faltando.push('Roteiro a criar do zero sem nenhum contexto ou referência informada.');
+  if(a.ia==='complexo') gargalo='Protocolo de IA complexo';
+  else if(a.motion==='elaborado') gargalo='Motion elaborado';
+  else if(a.script==='creed') gargalo='Criação de roteiro (Creed)';
+  else if(['infinity','cruze'].includes(a.video)) gargalo='Volume e complexidade do formato';
+  else if(a.ia==='simples') gargalo='Protocolo de IA simples';
+  else if(a.pessoas==='6+') gargalo='Logística de captação com muitas pessoas';
+  else gargalo='Aprovações, revisões e ajustes finais';
+  return{minH:Math.round(minH),maxH:Math.round(maxH),diasMin:Math.ceil(minH/6),diasMax:Math.ceil(maxH/5),alertas,faltando,gargalo};
+}
+
+const LBL={
+  script:{plot:'Plot — roteiro pronto',core:'Core — ideia clara',creed:'Creed — só a necessidade'},
+  video:{hit:'Hit',flow:'Flow',stone:'Stone',cruze:'Cruze',infinity:'Infinity',cover:'Cover',nd:'A definir'},
+  pessoas:{'1':'1 pessoa','2':'2 pessoas','3a5':'3 a 5 pessoas','6+':'6 ou mais','none':'Nenhuma'},
+  motion:{nao:'Sem motion extra',simples:'Motion simples',elaborado:'Motion elaborado'},
+  ia:{nao:'Sem protocolo de IA',simples:'Protocolo simples',complexo:'Protocolo complexo'},
+  prazo:{nao:'Sem data fixada',urgente:'Menos de 3 dias úteis',curto:'3 a 7 dias úteis',ok:'Mais de 7 dias úteis'}
+};
+
+function updProg(){
+  document.getElementById('prog').style.width=Math.round((state.step/TOTAL)*100)+'%';
+  document.getElementById('step-lbl').textContent='etapa '+(Math.min(state.step+1,TOTAL))+' de '+TOTAL;
+}
+
+function addMsg(html,cls){
+  const d=document.createElement('div');
+  d.className='msg'+(cls?' '+cls:'');
+  d.innerHTML=html;
+  app.appendChild(d);
+  setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'end'}),60);
+  return d;
+}
+function addBot(h){
+  return addMsg(`<div class="bot-row"><div class="bot-avatar">A</div><div class="bot-bubble">${h}</div></div>`);
+}
+function addUser(t){return addMsg(`<div class="user-msg"><div class="user-bubble">${t}</div></div>`);}
+function killActive(){const e=app.querySelector('.active');if(e)e.remove();}
+
+function renderStep(){
+  const s=steps[state.step];
+  if(!s){renderResult();return;}
+  updProg();
+  const botTxt=typeof s.bot==='function'?s.bot(state.answers):s.bot;
+  const w=document.createElement('div');
+  w.className='msg active';
+
+  if(s.type==='text'||s.type==='textarea'){
+    const eduH=s.edu?`<div class="edu-note">${s.edu}</div>`:'';
+    const inp=s.type==='textarea'
+      ?`<textarea id="inp" placeholder="${s.ph||''}"></textarea>`
+      :`<input type="text" id="inp" placeholder="${s.ph||''}">`;
+    w.innerHTML=`<div class="bot-row"><div class="bot-avatar">A</div><div class="bot-bubble">${botTxt}${eduH}<div class="text-wrap">${inp}<button class="confirm-btn show" style="margin-top:12px;" onclick="submitText()">Continuar →</button></div></div></div>`;
+    app.appendChild(w);
+    setTimeout(()=>{
+      const el=document.getElementById('inp');
+      if(el){el.focus();el.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&s.type==='text'){e.preventDefault();submitText();}});}
+    },80);
+  } else {
+    const eduH=s.edu?`<div class="edu-note">${s.edu}</div>`:'';
+    const opH=s.opts.map(o=>`<button class="opt" data-val="${o.v}" onclick="selOpt(this,'${o.v}')"><span class="opt-title">${o.t}</span>${o.d?`<span class="opt-desc">${o.d}</span>`:''}<span class="opt-impact">${o.i||''}</span></button>`).join('');
+    w.innerHTML=`<div class="bot-row"><div class="bot-avatar">A</div><div class="bot-bubble">${botTxt}${eduH}<div class="opts">${opH}</div><div class="react-zone" id="rz"></div><button class="confirm-btn" id="cfm" onclick="submitSingle()">Confirmar →</button></div></div>`;
+    app.appendChild(w);
+  }
+  w.scrollIntoView({behavior:'smooth',block:'end'});
+}
+
+function selOpt(el,val){
+  document.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  state.sel=val;
+  const s=steps[state.step];
+  const rz=document.getElementById('rz');
+  if(rz&&s.reacts&&s.reacts[val]){
+    rz.innerHTML='<strong>O que isso significa na prática:</strong> '+s.reacts[val];
+    rz.classList.add('show');
+  }
+  const cfm=document.getElementById('cfm');
+  if(cfm)cfm.classList.add('show');
+}
+
+function submitSingle(){
+  if(!state.sel)return;
+  const s=steps[state.step];
+  state.answers[s.id]=state.sel;
+  const lb=s.opts.find(o=>o.v===state.sel)?.t||state.sel;
+  killActive();addUser(lb);
+  state.sel=null;state.step++;
+  setTimeout(renderStep,220);
+}
+
+function submitText(){
+  const inp=document.getElementById('inp');
+  if(!inp||!inp.value.trim())return;
+  const s=steps[state.step];
+  state.answers[s.id]=inp.value.trim();
+  const v=inp.value.trim();
+  killActive();addUser(v);
+  state.step++;
+  setTimeout(renderStep,220);
+}
+
+function renderResult(){
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('step-lbl').textContent='briefing completo';
+  const a=state.answers;
+  const p=calc(a);
+  const entrega=calcEntrega(p.maxH);
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+
+  const diasStr=p.diasMin===p.diasMax?p.diasMin+'':p.diasMin+'–'+p.diasMax;
+  const horasStr=p.minH===p.maxH?p.minH+'':p.minH+'–'+p.maxH;
+
+  // build timeline html
+  let timelineHtml='';
+  if(entrega.hasAgenda&&entrega.timeline&&entrega.timeline.length){
+    const maxA=entrega.maxAvail||8;
+    const rows=entrega.timeline.map(({k,avail,used})=>{
+      const d=new Date(k+'T00:00:00');
+      const pct=Math.round((used/maxA)*100);
+      return `<div class="tl-row"><div class="tl-date">${semana[d.getDay()]}, ${d.getDate()}/${meses[d.getMonth()]}</div><div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%"></div></div><div class="tl-hrs">${Math.round(used*10)/10}h</div></div>`;
+    }).join('');
+    timelineHtml=`<div style="margin-top:12px;"><div class="r-label">Distribuição por dia</div><div style="margin-top:6px;">${rows}</div></div>`;
+  }
+
+  // entrega card
+  let entregaHtml='';
+  if(entrega.hasAgenda){
+    if(entrega.agendaInsuficiente){
+      entregaHtml=`<div class="prazo-card" style="grid-column:span 1"><div class="prazo-num" style="font-size:16px;line-height:1.4;">${entrega.endDateStr||'—'}</div><div class="prazo-sub">até onde a agenda cobre</div></div>
+      <div class="agenda-warn">A agenda disponível não cobre todo o escopo desse projeto. Ainda faltam ~${entrega.horasRestantes}h sem dia alocado. A produção precisa atualizar a disponibilidade ou o prazo será maior.</div>`;
+    } else {
+      entregaHtml=`<div class="prazo-card destaque"><div class="prazo-num">${entrega.endDateStr}</div><div class="prazo-sub">data estimada de entrega</div></div>
+      <div class="agenda-ok">Data calculada com base na agenda de produção disponível. Sujeita a ajustes conforme aprovações e revisões.</div>`;
+    }
+  } else {
+    entregaHtml=`<div class="prazo-card" style="border:1px dashed var(--paper3)"><div class="prazo-num" style="font-size:18px;color:var(--ink3);">sem agenda</div><div class="prazo-sub">configure no painel de agenda</div></div>`;
+  }
+
+  const alertsH=p.alertas.length?p.alertas.map(x=>`<div class="alert-box">${x}</div>`).join(''):'';
+  const missingH=p.faltando.length?`<hr class="divider"><div><div class="r-label" style="color:var(--red);">Informações em falta</div>${p.faltando.map(x=>`<div class="missing-box">${x}</div>`).join('')}</div>`:'';
+  const obsH=a.obs&&a.obs.trim().length>3?`<hr class="divider"><div><div class="r-label">Observações adicionais</div><div class="r-val">${a.obs}</div></div>`:'';
+
+  const resultHtml=`
+<div class="result-card">
+  <div class="r-brand">
+    <div class="r-brand-icon">A</div>
+    <div><div class="r-brand-name">ALICINE</div><div class="r-brand-sub">assistente virtual de produção audiovisual ryota</div></div>
+  </div>
+  <div class="r-title">Briefing de ${a.nome}</div>
+  <div class="r-date">gerado em ${hoje}</div>
+  <div><div class="r-label">Objetivo declarado</div><div class="r-val">${a.objetivo}</div></div>
+  <hr class="divider">
+  <div><div class="r-label">Classificação do projeto</div><div style="margin-top:6px;">
+    <span class="badge badge-purple">Script: ${LBL.script[a.script]||a.script}</span>
+    <span class="badge badge-purple">Vídeo: ${LBL.video[a.video]||a.video}</span>
+    <span class="badge badge-amber">Pessoas: ${LBL.pessoas[a.pessoas]||a.pessoas}</span>
+    <span class="badge badge-amber">Motion: ${LBL.motion[a.motion]||a.motion}</span>
+    <span class="badge badge-amber">IA: ${LBL.ia[a.ia]||a.ia}</span>
+    <span class="badge badge-amber">Prazo ref.: ${LBL.prazo[a.prazo]||a.prazo}</span>
+  </div></div>
+  <hr class="divider">
+  <div><div class="r-label">Estimativa de prazo</div>
+    <div class="prazo-grid">
+      <div class="prazo-card"><div class="prazo-num">${diasStr}</div><div class="prazo-sub">dias úteis de trabalho</div></div>
+      <div class="prazo-card"><div class="prazo-num">${horasStr}h</div><div class="prazo-sub">carga total estimada</div></div>
+      ${entregaHtml}
+    </div>
+    <div class="gargalo-box"><strong>Principal gargalo:</strong> ${p.gargalo}</div>
+    ${alertsH}
+    ${timelineHtml}
+  </div>
+  ${missingH}
+  ${obsH}
+  <hr class="divider">
+  <div><div class="r-label">O que acontece agora</div>
+    <div class="edu-final">
+      Seu briefing está organizado e pronto para ir à produção.<br><br>
+      <strong>Importante:</strong> a data estimada acima é calculada com base na agenda de produção disponível. O prazo final só pode ser confirmado depois que a produção verificar outros projetos em andamento e aprovar o início.<br><br>
+      ${p.faltando.length?'<strong>Atenção:</strong> há informações em falta nesse briefing. Completar esses itens antes de enviar evita atrasos no início do projeto.<br><br>':''}
+      Se tiver dúvida sobre algum ponto, releia o resumo acima — ele reflete exatamente o que a produção vai receber.
+    </div>
+  </div>
+</div>`;
+
+  addBot('Pronto! Seu briefing está completo. Aqui está o resumo com tudo que a produção precisa saber.'+resultHtml);
+
+  const rb=document.createElement('button');
+  rb.className='restart-btn msg';
+  rb.textContent='Iniciar nova demanda';
+  rb.onclick=()=>{state.step=0;state.answers={};state.sel=null;app.innerHTML='';renderStep();};
+  app.appendChild(rb);
+  setTimeout(()=>rb.scrollIntoView({behavior:'smooth',block:'end'}),100);
+}
+
+const app=document.getElementById('app');
+renderStep();
+</script>
+</body>
+</html>
