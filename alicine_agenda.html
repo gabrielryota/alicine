@@ -18,62 +18,115 @@ html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--pape
 header{border-bottom:1px solid var(--paper3);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);position:sticky;top:0;z-index:10;}
 .brand{display:flex;align-items:center;gap:12px;}
 .brand-img{width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:center top;}
-.brand-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:500;color:var(--ink);}
+.brand-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:500;}
 .brand-name span{color:var(--ali);}
 .brand-sub{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);}
+.header-right{display:flex;align-items:center;gap:10px;}
 .tag{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);background:var(--paper2);border:1px solid var(--paper3);padding:4px 10px;border-radius:100px;}
-.sync-btn{padding:9px 20px;background:var(--ali);color:#fff;border:none;border-radius:var(--rm);font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity 0.15s;}
+.sync-btn{padding:9px 20px;background:var(--ali);color:#fff;border:none;border-radius:var(--rm);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity 0.15s;}
 .sync-btn:hover{opacity:0.88;}
 .sync-btn:disabled{opacity:0.5;cursor:default;}
-main{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
-.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:600;margin-bottom:6px;}
-.page-sub{font-size:14.5px;color:var(--ink2);line-height:1.65;margin-bottom:2rem;max-width:560px;}
-.section-label{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.08em;color:var(--ink3);text-transform:uppercase;margin-bottom:10px;}
-.divider{border:none;border-top:1px solid var(--paper3);margin:2rem 0;}
-.config-box{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:16px 18px;margin-bottom:2rem;}
-.config-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
-.config-row:last-child{margin-bottom:0;}
-.config-row label{font-size:14px;color:var(--ink2);white-space:nowrap;}
-.config-row input[type=text]{flex:1;min-width:200px;padding:9px 12px;font-size:13px;font-family:'DM Mono',monospace;border:1px solid var(--paper3);border-radius:var(--r);background:var(--paper);color:var(--ink);}
+
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+
+/* config */
+.config-box{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:14px 18px;margin-bottom:1.5rem;}
+.config-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.config-row+.config-row{margin-top:10px;}
+.config-row label{font-size:13.5px;color:var(--ink2);white-space:nowrap;}
+.config-row input[type=text]{flex:1;min-width:180px;padding:8px 12px;font-size:13px;font-family:'DM Mono',monospace;border:1px solid var(--paper3);border-radius:var(--r);background:var(--paper);color:var(--ink);}
 .config-row input[type=text]:focus{outline:none;border-color:var(--ali3);}
-.config-row input[type=number]{width:68px;padding:8px 10px;font-size:14px;font-family:'DM Mono',monospace;border:1px solid var(--paper3);border-radius:var(--r);background:var(--paper);color:var(--ink);text-align:center;}
+.config-row input[type=number]{width:62px;padding:7px 8px;font-size:14px;font-family:'DM Mono',monospace;border:1px solid var(--paper3);border-radius:var(--r);background:var(--paper);color:var(--ink);text-align:center;}
 .config-row input[type=number]:focus{outline:none;border-color:var(--ali3);}
-.save-config-btn{padding:9px 18px;background:var(--ink);color:var(--paper);border:none;border-radius:var(--rm);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;}
-.save-config-btn:hover{opacity:0.82;}
-.status-box{padding:12px 16px;border-radius:var(--rm);font-size:13.5px;line-height:1.6;margin-bottom:1.5rem;display:none;}
+.save-btn{padding:8px 16px;background:var(--ink);color:var(--paper);border:none;border-radius:var(--rm);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;}
+.save-btn:hover{opacity:0.82;}
+
+.status-box{padding:11px 15px;border-radius:var(--rm);font-size:13px;line-height:1.6;margin-bottom:1.25rem;display:none;}
 .status-box.show{display:block;}
 .status-box.loading{background:var(--ali2);border:1px solid var(--ali3);color:#4c1d95;}
 .status-box.ok{background:#dcfce7;border:1px solid #86efac;color:#14532d;}
 .status-box.error{background:#fef2f2;border:1px solid #fca5a5;color:#7f1d1d;}
-.week-heads{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px;}
+
+/* layout */
+.layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+@media(max-width:768px){.layout{grid-template-columns:1fr;}}
+
+/* calendar */
+.cal-wrap{}
+.section-label{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.08em;color:var(--ink3);text-transform:uppercase;margin-bottom:10px;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink2);}
+.legend-dot{width:9px;height:9px;border-radius:50%;}
+.week-heads{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:5px;}
 .wh{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);text-align:center;padding:3px 0;}
-.cal-grid{display:flex;flex-direction:column;gap:6px;}
-.week-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-.day{border:1px solid var(--paper3);border-radius:var(--rm);padding:10px 8px;background:var(--paper);min-height:86px;display:flex;flex-direction:column;align-items:center;gap:3px;}
-.day.past{opacity:0.3;}
+.cal-grid{display:flex;flex-direction:column;gap:5px;}
+.week-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.day{border:1px solid var(--paper3);border-radius:var(--rm);padding:9px 7px;background:var(--paper);min-height:82px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all 0.15s;}
+.day:hover:not(.past){border-color:var(--ali3);background:var(--ali2);}
+.day.selected{border-color:var(--ali);background:var(--ali2);box-shadow:0 0 0 2px var(--ali3);}
+.day.past{opacity:0.3;cursor:default;}
 .day.today{border-color:var(--ali3);}
-.day.indisponivel{background:var(--paper2);}
+.day.livre{border-left:3px solid var(--green);}
+.day.ocupado{border-left:3px solid var(--amber);}
+.day.bloqueado{background:var(--paper2);border-left:3px solid var(--paper3);}
 .day-num{font-size:13px;font-weight:500;color:var(--ink);}
 .day-mon{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;}
 .day.today .day-num{background:var(--ali);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;}
 .day-hrs{font-size:14px;font-family:'DM Mono',monospace;font-weight:500;margin-top:auto;}
 .day.livre .day-hrs{color:var(--green);}
 .day.ocupado .day-hrs{color:var(--amber);}
-.day.indisponivel .day-hrs{color:var(--ink3);}
-.day-tag{font-size:10px;padding:2px 7px;border-radius:100px;}
+.day.bloqueado .day-hrs{color:var(--ink3);}
+.day-tag{font-size:10px;padding:2px 6px;border-radius:100px;}
 .tag-livre{background:#dcfce7;color:#14532d;}
 .tag-ocupado{background:#fef3c7;color:#78350f;}
 .tag-bloqueado{background:var(--paper3);color:var(--ink3);}
-.eventos-list{width:100%;margin-top:2px;}
-.evento-item{font-size:10px;color:var(--ink2);line-height:1.35;padding:2px 4px;background:var(--paper2);border-radius:3px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:1.5rem;}
-.sum-card{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:14px;}
-.sum-num{font-size:24px;font-weight:300;font-family:'DM Mono',monospace;color:var(--ink);}
-.sum-lbl{font-size:12px;color:var(--ink3);margin-top:3px;}
-.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:1rem;}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);}
-.legend-dot{width:10px;height:10px;border-radius:50%;}
-.note{font-size:13px;color:var(--ink2);line-height:1.65;padding:13px 16px;background:var(--ali2);border:1px solid var(--ali3);border-radius:var(--rm);}
+.day-blocos{font-size:10px;color:var(--ali);font-family:'DM Mono',monospace;margin-top:1px;}
+
+/* summary */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:1.25rem;}
+.sum-card{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:12px;}
+.sum-num{font-size:22px;font-weight:300;font-family:'DM Mono',monospace;color:var(--ink);}
+.sum-lbl{font-size:11px;color:var(--ink3);margin-top:2px;}
+
+/* side panel */
+.side-panel{background:var(--paper);border:1px solid var(--paper3);border-radius:var(--rl);padding:1.25rem;position:sticky;top:70px;}
+.panel-empty{text-align:center;padding:2rem 1rem;color:var(--ink3);}
+.panel-empty-icon{font-size:28px;margin-bottom:8px;}
+.panel-empty-txt{font-size:13.5px;}
+.panel-date{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.panel-hrs{font-size:13px;color:var(--ink2);margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--paper3);}
+.panel-hrs span{font-family:'DM Mono',monospace;font-weight:500;}
+.panel-hrs .livre{color:var(--green);}
+.panel-hrs .ocupado{color:var(--amber);}
+
+/* blocos list */
+.blocos-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem;}
+.bloco-item{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.bloco-info{}
+.bloco-nome{font-size:13.5px;font-weight:500;color:var(--ink);}
+.bloco-hora{font-size:12px;font-family:'DM Mono',monospace;color:var(--ink3);margin-top:2px;}
+.bloco-dur{font-size:12px;font-family:'DM Mono',monospace;color:var(--amber);font-weight:500;}
+.bloco-del{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;}
+.bloco-del:hover{color:var(--red);}
+
+/* add bloco form */
+.add-form{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:12px;}
+.add-form-title{font-size:12px;font-family:'DM Mono',monospace;letter-spacing:0.06em;color:var(--ink3);text-transform:uppercase;margin-bottom:10px;}
+.form-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.form-row label{font-size:13px;color:var(--ink2);white-space:nowrap;min-width:60px;}
+.form-row input[type=text]{flex:1;padding:7px 10px;font-size:13.5px;font-family:'DM Sans',sans-serif;border:1px solid var(--paper3);border-radius:var(--r);background:var(--paper);color:var(--ink);}
+.form-row input[type=time]{padding:7px 10px;font-size:13px;font-family:'DM Mono',monospace;border:1px solid var(--paper3);border-radius:var(--r);background:var(--paper);color:var(--ink);width:100px;}
+.form-row input:focus{outline:none;border-color:var(--ali3);}
+.add-btn{width:100%;padding:10px;background:var(--ali);color:#fff;border:none;border-radius:var(--rm);font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity 0.15s;margin-top:4px;}
+.add-btn:hover{opacity:0.88;}
+
+/* gcal events */
+.gcal-section{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--paper3);}
+.gcal-title{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.06em;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;}
+.gcal-item{font-size:12.5px;color:var(--ink2);padding:4px 8px;background:var(--ali2);border-radius:var(--r);margin-bottom:4px;border-left:2px solid var(--ali3);}
+
+.divider{border:none;border-top:1px solid var(--paper3);margin:1.5rem 0;}
+.note{font-size:13px;color:var(--ink2);line-height:1.65;padding:12px 15px;background:var(--ali2);border:1px solid var(--ali3);border-radius:var(--rm);}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:11px 24px;border-radius:var(--rm);font-size:14px;opacity:0;transition:opacity 0.25s;pointer-events:none;z-index:100;display:flex;align-items:center;gap:8px;}
 .toast.show{opacity:1;}
 .toast-dot{width:8px;height:8px;border-radius:50%;background:var(--ali3);}
@@ -88,50 +141,82 @@ main{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
       <div class="brand-sub">painel restrito</div>
     </div>
   </div>
-  <button class="sync-btn" id="syncBtn" onclick="sincronizar()">Sincronizar agenda</button>
+  <div class="header-right">
+    <span class="tag">painel restrito</span>
+    <button class="sync-btn" id="syncBtn" onclick="sincronizar()">Sincronizar Google Calendar</button>
+  </div>
 </header>
 
 <main>
-  <div class="page-title">Disponibilidade de produção</div>
-  <p class="page-sub">A ALICINE lê sua agenda do Google Calendar automaticamente e calcula as horas disponíveis por dia. Configure o link abaixo e clique em sincronizar.</p>
-
-  <div class="section-label">Configuração</div>
   <div class="config-box">
     <div class="config-row">
       <label>Link iCal:</label>
       <input type="text" id="icalUrl" placeholder="https://calendar.google.com/calendar/ical/...">
-      <button class="save-config-btn" onclick="salvarConfig()">Salvar</button>
+      <button class="save-btn" onclick="salvarConfig()">Salvar</button>
     </div>
     <div class="config-row">
-      <label>Início do expediente:</label>
+      <label>Expediente:</label>
       <input type="number" id="hrInicio" min="6" max="12" value="8">
-      <label>Fim:</label>
+      <label>às</label>
       <input type="number" id="hrFim" min="14" max="20" value="18">
-      <label>Horas produtivas/dia:</label>
+      <label style="margin-left:8px;">Horas produtivas/dia:</label>
       <input type="number" id="hrsProd" min="1" max="10" step="0.5" value="5">
     </div>
   </div>
 
   <div class="status-box" id="statusBox"></div>
 
-  <div class="section-label">Próximas 3 semanas</div>
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div>Livre</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#b45309;"></div>Com compromissos</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#9e9b92;"></div>Bloqueado</div>
-  </div>
-  <div class="week-heads" id="weekHeads"></div>
-  <div class="cal-grid" id="calGrid"></div>
+  <div class="layout">
+    <div class="cal-wrap">
+      <div class="section-label">Próximas 3 semanas — clique em um dia para gerenciar</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div>Livre</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#b45309;"></div>Com compromissos</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#9e9b92;"></div>Bloqueado</div>
+      </div>
+      <div class="week-heads" id="weekHeads"></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="summary">
+        <div class="sum-card"><div class="sum-num" id="sumLivre">—</div><div class="sum-lbl">dias livres</div></div>
+        <div class="sum-card"><div class="sum-num" id="sumOcup">—</div><div class="sum-lbl">com compromissos</div></div>
+        <div class="sum-card"><div class="sum-num" id="sumHoras">—</div><div class="sum-lbl">horas disponíveis</div></div>
+        <div class="sum-card"><div class="sum-num" id="sumProx">—</div><div class="sum-lbl">próximo dia livre</div></div>
+      </div>
+    </div>
 
-  <div class="summary">
-    <div class="sum-card"><div class="sum-num" id="sumLivre">—</div><div class="sum-lbl">dias livres</div></div>
-    <div class="sum-card"><div class="sum-num" id="sumOcupado">—</div><div class="sum-lbl">dias com compromissos</div></div>
-    <div class="sum-card"><div class="sum-num" id="sumHoras">—</div><div class="sum-lbl">horas disponíveis</div></div>
-    <div class="sum-card"><div class="sum-num" id="sumProx">—</div><div class="sum-lbl">próximo dia livre</div></div>
+    <div class="side-panel" id="sidePanel">
+      <div class="panel-empty" id="panelEmpty">
+        <div class="panel-empty-icon">📅</div>
+        <div class="panel-empty-txt">Clique em um dia para ver e gerenciar os blocos de produção</div>
+      </div>
+      <div id="panelContent" style="display:none;">
+        <div class="panel-date" id="panelDate"></div>
+        <div class="panel-hrs" id="panelHrs"></div>
+        <div class="blocos-list" id="blocosList"></div>
+        <div class="add-form">
+          <div class="add-form-title">Adicionar bloco de produção</div>
+          <div class="form-row">
+            <label>Descrição:</label>
+            <input type="text" id="blocoNome" placeholder="Ex: Gravação Projeto X">
+          </div>
+          <div class="form-row">
+            <label>Início:</label>
+            <input type="time" id="blocoInicio" value="09:00">
+            <label>Fim:</label>
+            <input type="time" id="blocoFim" value="11:00">
+          </div>
+          <button class="add-btn" onclick="adicionarBloco()">Adicionar bloco +</button>
+        </div>
+        <div class="gcal-section" id="gcalSection" style="display:none;">
+          <div class="gcal-title">Eventos do Google Calendar</div>
+          <div id="gcalItems"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="divider"></div>
-  <div class="note">Sincronize sempre que quiser atualizar. Os dados são salvos localmente e usados pela ALICINE para calcular datas de entrega nos briefings. A equipe nunca vê essas informações.</div>
+  <div class="note">Sincronize o Google Calendar para importar seus compromissos. Adicione blocos de produção manualmente para descontar do tempo disponível. Os dados são usados pela ALICINE para calcular datas de entrega.</div>
 </main>
 
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toastMsg"></span></div>
@@ -139,20 +224,26 @@ main{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
 <script>
 const AGENDA_KEY='alicine_agenda_v1';
 const CONFIG_KEY='alicine_config_v1';
+const BLOCOS_KEY='alicine_blocos_v1';
 const PROXY='https://api.allorigins.win/raw?url=';
 const diasNomes=['seg','ter','qua','qui','sex'];
 const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-let calData={};
+const diasSemana=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+
+let calData={};   // { dstr: { gcalEvs:[], hrsGcal } }
+let blocos={};    // { dstr: [ {id,nome,inicio,fim,dur} ] }
+let selectedDay=null;
 
 function pad(n){return n<10?'0'+n:''+n;}
 function ds(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function hoje(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function timeToMin(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
+function minToHrs(m){return Math.round(m/60*10)/10;}
 
 function getConfig(){
   try{const r=localStorage.getItem(CONFIG_KEY);return r?JSON.parse(r):{url:'',hrInicio:8,hrFim:18,hrsProd:5};}
   catch(e){return{url:'',hrInicio:8,hrFim:18,hrsProd:5};}
 }
-
 function salvarConfig(){
   const cfg={
     url:document.getElementById('icalUrl').value.trim(),
@@ -163,13 +254,46 @@ function salvarConfig(){
   localStorage.setItem(CONFIG_KEY,JSON.stringify(cfg));
   showToast('Configuração salva');
 }
-
 function carregarConfig(){
   const cfg=getConfig();
   if(cfg.url)document.getElementById('icalUrl').value=cfg.url;
   document.getElementById('hrInicio').value=cfg.hrInicio||8;
   document.getElementById('hrFim').value=cfg.hrFim||18;
   document.getElementById('hrsProd').value=cfg.hrsProd||5;
+}
+
+function carregarBlocos(){
+  try{const r=localStorage.getItem(BLOCOS_KEY);return r?JSON.parse(r):{};}
+  catch(e){return{};}
+}
+function salvarBlocos(){localStorage.setItem(BLOCOS_KEY,JSON.stringify(blocos));}
+
+function calcHrsLivres(dstr){
+  const cfg=getConfig();
+  const expStart=cfg.hrInicio*60,expEnd=cfg.hrFim*60,expDur=expEnd-expStart;
+  let ocupados=0;
+  // gcal events
+  const data=calData[dstr];
+  if(data&&data.gcalEvs){
+    for(const ev of data.gcalEvs){
+      if(!ev.end)continue;
+      const s=ev.start.h*60+ev.start.min;
+      const e=ev.end.h*60+ev.end.min;
+      if(e<=expStart||s>=expEnd)continue;
+      ocupados+=Math.min(e,expEnd)-Math.max(s,expStart);
+    }
+  }
+  // blocos de produção
+  const dayBlocos=blocos[dstr]||[];
+  for(const b of dayBlocos){
+    const s=timeToMin(b.inicio);
+    const e=timeToMin(b.fim);
+    if(e<=expStart||s>=expEnd)continue;
+    ocupados+=Math.min(e,expEnd)-Math.max(s,expStart);
+  }
+  const livreMin=Math.max(0,expDur-ocupados);
+  const hrsLivres=Math.round((livreMin/expDur)*cfg.hrsProd*10)/10;
+  return hrsLivres;
 }
 
 function setStatus(tipo,msg){
@@ -188,11 +312,7 @@ function parseIcal(text){
       if(!val)return null;
       const v=val.replace(/[^0-9T]/g,'');
       if(v.length<8)return null;
-      return{
-        str:v.substr(0,4)+'-'+v.substr(4,2)+'-'+v.substr(6,2),
-        h:v.length>=13?parseInt(v.substr(9,2)):0,
-        min:v.length>=15?parseInt(v.substr(11,2)):0
-      };
+      return{str:v.substr(0,4)+'-'+v.substr(4,2)+'-'+v.substr(6,2),h:v.length>=13?parseInt(v.substr(9,2)):0,min:v.length>=15?parseInt(v.substr(11,2)):0};
     };
     const start=parseDate(getField('DTSTART'));
     const end=parseDate(getField('DTEND'));
@@ -200,24 +320,6 @@ function parseIcal(text){
     if(start)eventos.push({summary,start,end});
   }
   return eventos;
-}
-
-function calcDia(eventos,dstr,cfg){
-  const dayEvs=eventos.filter(e=>e.start&&e.start.str===dstr);
-  if(!dayEvs.length)return{hrsLivres:cfg.hrsProd,eventos:[],status:'livre'};
-  const expStart=cfg.hrInicio*60,expEnd=cfg.hrFim*60,expDur=expEnd-expStart;
-  let ocupados=0;
-  for(const ev of dayEvs){
-    if(!ev.end)continue;
-    const s=ev.start.h*60+ev.start.min;
-    const e=ev.end.h*60+ev.end.min;
-    if(e<=expStart||s>=expEnd)continue;
-    ocupados+=Math.min(e,expEnd)-Math.max(s,expStart);
-  }
-  const livreMin=Math.max(0,expDur-ocupados);
-  const hrsLivres=Math.round((livreMin/expDur)*cfg.hrsProd*10)/10;
-  const status=hrsLivres>=cfg.hrsProd?'livre':hrsLivres<=0?'indisponivel':'ocupado';
-  return{hrsLivres,eventos:dayEvs.map(e=>e.summary).filter(Boolean),status};
 }
 
 async function sincronizar(){
@@ -237,26 +339,113 @@ async function sincronizar(){
     const dow=start.getDay();
     start.setDate(start.getDate()-(dow===0?6:dow-1));
     calData={};
-    const agendaSalvar={};
     for(let w=0;w<3;w++){
       for(let d=0;d<5;d++){
         const cur=new Date(start);
         cur.setDate(start.getDate()+w*7+d);
         if(cur<t)continue;
         const dstr=ds(cur);
-        const dia=calcDia(eventos,dstr,cfg);
-        calData[dstr]=dia;
-        if(dia.hrsLivres>0)agendaSalvar[dstr]=dia.hrsLivres;
+        const dayEvs=eventos.filter(e=>e.start&&e.start.str===dstr);
+        calData[dstr]={gcalEvs:dayEvs};
       }
     }
-    localStorage.setItem(AGENDA_KEY,JSON.stringify(agendaSalvar));
+    salvarAgenda();
     buildGrid();
-    setStatus('ok','Sincronizado com sucesso. '+eventos.length+' eventos encontrados. Agenda pronta para cálculo de prazos.');
-    showToast('Agenda sincronizada');
+    if(selectedDay)renderPanel(selectedDay);
+    setStatus('ok','Sincronizado. '+eventos.length+' eventos encontrados.');
+    showToast('Google Calendar sincronizado');
   }catch(e){
-    setStatus('error','Não foi possível buscar o calendário. Verifique o link. Erro: '+e.message);
+    setStatus('error','Erro ao buscar calendário: '+e.message);
   }finally{
-    btn.disabled=false;btn.textContent='Sincronizar agenda';
+    btn.disabled=false;btn.textContent='Sincronizar Google Calendar';
+  }
+}
+
+function salvarAgenda(){
+  const agendaSalvar={};
+  const t=hoje();
+  const start=new Date(t);
+  const dow=start.getDay();
+  start.setDate(start.getDate()-(dow===0?6:dow-1));
+  for(let w=0;w<3;w++){
+    for(let d=0;d<5;d++){
+      const cur=new Date(start);
+      cur.setDate(start.getDate()+w*7+d);
+      if(cur<t)continue;
+      const dstr=ds(cur);
+      const hrs=calcHrsLivres(dstr);
+      if(hrs>0)agendaSalvar[dstr]=hrs;
+    }
+  }
+  localStorage.setItem(AGENDA_KEY,JSON.stringify(agendaSalvar));
+}
+
+function adicionarBloco(){
+  if(!selectedDay)return;
+  const nome=document.getElementById('blocoNome').value.trim();
+  const inicio=document.getElementById('blocoInicio').value;
+  const fim=document.getElementById('blocoFim').value;
+  if(!nome||!inicio||!fim){showToast('Preencha todos os campos');return;}
+  if(timeToMin(fim)<=timeToMin(inicio)){showToast('Fim deve ser depois do início');return;}
+  const dur=minToHrs(timeToMin(fim)-timeToMin(inicio));
+  if(!blocos[selectedDay])blocos[selectedDay]=[];
+  blocos[selectedDay].push({id:Date.now(),nome,inicio,fim,dur});
+  salvarBlocos();
+  salvarAgenda();
+  buildGrid();
+  renderPanel(selectedDay);
+  document.getElementById('blocoNome').value='';
+  showToast('Bloco adicionado');
+}
+
+function removerBloco(dstr,id){
+  if(!blocos[dstr])return;
+  blocos[dstr]=blocos[dstr].filter(b=>b.id!==id);
+  if(!blocos[dstr].length)delete blocos[dstr];
+  salvarBlocos();
+  salvarAgenda();
+  buildGrid();
+  renderPanel(dstr);
+}
+
+function renderPanel(dstr){
+  selectedDay=dstr;
+  document.getElementById('panelEmpty').style.display='none';
+  document.getElementById('panelContent').style.display='block';
+  const d=new Date(dstr+'T00:00:00');
+  document.getElementById('panelDate').textContent=diasSemana[d.getDay()]+', '+d.getDate()+' de '+meses[d.getMonth()];
+  const cfg=getConfig();
+  const hrsLivres=calcHrsLivres(dstr);
+  const dayBlocos=blocos[dstr]||[];
+  const hrsProducao=dayBlocos.reduce((a,b)=>a+b.dur,0);
+  const clr=hrsLivres>=cfg.hrsProd?'livre':hrsLivres<=0?'ocupado':'ocupado';
+  document.getElementById('panelHrs').innerHTML=
+    `Disponível: <span class="${clr}">${hrsLivres}h</span> de ${cfg.hrsProd}h produtivas`+
+    (hrsProducao>0?` · <span style="color:var(--ali)">${Math.round(hrsProducao*10)/10}h em blocos</span>`:'');
+
+  const list=document.getElementById('blocosList');
+  if(!dayBlocos.length){
+    list.innerHTML=`<div style="font-size:13px;color:var(--ink3);padding:4px 0;">Nenhum bloco de produção nesse dia.</div>`;
+  }else{
+    list.innerHTML=dayBlocos.map(b=>`
+      <div class="bloco-item">
+        <div class="bloco-info">
+          <div class="bloco-nome">${b.nome}</div>
+          <div class="bloco-hora">${b.inicio} → ${b.fim} · <span class="bloco-dur">${b.dur}h</span></div>
+        </div>
+        <button class="bloco-del" onclick="removerBloco('${dstr}',${b.id})">×</button>
+      </div>`).join('');
+  }
+
+  // gcal events
+  const data=calData[dstr];
+  const gcalSec=document.getElementById('gcalSection');
+  const gcalItems=document.getElementById('gcalItems');
+  if(data&&data.gcalEvs&&data.gcalEvs.length){
+    gcalSec.style.display='block';
+    gcalItems.innerHTML=data.gcalEvs.map(e=>`<div class="gcal-item">${e.summary}${e.start.h?` · ${pad(e.start.h)}:${pad(e.start.min)}`+' → '+(e.end?`${pad(e.end.h)}:${pad(e.end.min)}`:''):''}</div>`).join('');
+  }else{
+    gcalSec.style.display='none';
   }
 }
 
@@ -264,11 +453,13 @@ function buildGrid(){
   document.getElementById('weekHeads').innerHTML=diasNomes.map(d=>`<div class="wh">${d}</div>`).join('');
   const grid=document.getElementById('calGrid');
   grid.innerHTML='';
+  const cfg=getConfig();
   const t=hoje();
   const start=new Date(t);
   const dow=start.getDay();
   start.setDate(start.getDate()-(dow===0?6:dow-1));
   let nLivre=0,nOcup=0,totalH=0,proxLivre=null;
+
   for(let w=0;w<3;w++){
     const row=document.createElement('div');
     row.className='week-row';
@@ -278,33 +469,39 @@ function buildGrid(){
       const dstr=ds(cur);
       const isPast=cur<t;
       const isToday=ds(cur)===ds(t);
-      const data=calData[dstr];
       const cell=document.createElement('div');
-      let cls='day'+(isPast?' past':'')+(isToday?' today':'');
-      let hrsHtml='',tagHtml='',evHtml='';
-      if(!isPast&&data){
-        cls+=' '+data.status;
-        if(data.status==='livre'){nLivre++;if(!proxLivre)proxLivre=cur;}
-        else nOcup++;
-        totalH+=data.hrsLivres;
-        hrsHtml=`<div class="day-hrs">${data.hrsLivres}h</div>`;
-        const tc={livre:'tag-livre',ocupado:'tag-ocupado',indisponivel:'tag-bloqueado'}[data.status];
-        const tl={livre:'livre',ocupado:'ocupado',indisponivel:'bloqueado'}[data.status];
+      let cls='day'+(isPast?' past':'')+(isToday?' today':'')+(selectedDay===dstr?' selected':'');
+      let hrsHtml='',tagHtml='',blocosHtml='';
+
+      if(!isPast){
+        const hrsLivres=calData[dstr]||blocos[dstr]?calcHrsLivres(dstr):cfg.hrsProd;
+        const hasData=calData[dstr]||blocos[dstr];
+        const status=!hasData?'livre':hrsLivres>=cfg.hrsProd?'livre':hrsLivres<=0?'bloqueado':'ocupado';
+        cls+=' '+status;
+        if(status==='livre'){nLivre++;if(!proxLivre)proxLivre=cur;}
+        else if(status!=='bloqueado')nOcup++;
+        totalH+=hrsLivres;
+        hrsHtml=`<div class="day-hrs">${hrsLivres}h</div>`;
+        const tc={livre:'tag-livre',ocupado:'tag-ocupado',bloqueado:'tag-bloqueado'}[status];
+        const tl={livre:'livre',ocupado:'ocupado',bloqueado:'bloqueado'}[status];
         tagHtml=`<div class="day-tag ${tc}">${tl}</div>`;
-        if(data.eventos.length)evHtml=`<div class="eventos-list">${data.eventos.slice(0,2).map(e=>`<div class="evento-item">${e}</div>`).join('')}${data.eventos.length>2?`<div class="evento-item">+${data.eventos.length-2}</div>`:''}</div>`;
+        const nb=blocos[dstr]?blocos[dstr].length:0;
+        if(nb>0)blocosHtml=`<div class="day-blocos">+${nb} bloco${nb>1?'s':''}</div>`;
+        cell.addEventListener('click',()=>renderPanel(dstr));
       }else{
         hrsHtml=`<div class="day-hrs" style="color:var(--ink3)">—</div>`;
-        if(!isPast){cls+=' indisponivel';tagHtml=`<div class="day-tag tag-bloqueado">sem dados</div>`;}
       }
+
       const numHtml=isToday?`<div class="day-num"><span>${cur.getDate()}</span></div>`:`<div class="day-num">${cur.getDate()}</div>`;
       cell.className=cls;
-      cell.innerHTML=`${numHtml}<div class="day-mon">${meses[cur.getMonth()]}</div>${hrsHtml}${tagHtml}${evHtml}`;
+      cell.innerHTML=`${numHtml}<div class="day-mon">${meses[cur.getMonth()]}</div>${hrsHtml}${tagHtml}${blocosHtml}`;
       row.appendChild(cell);
     }
     grid.appendChild(row);
   }
+
   document.getElementById('sumLivre').textContent=nLivre||'—';
-  document.getElementById('sumOcupado').textContent=nOcup||'—';
+  document.getElementById('sumOcup').textContent=nOcup||'—';
   document.getElementById('sumHoras').textContent=totalH>0?(Math.round(totalH*10)/10)+'h':'—';
   document.getElementById('sumProx').textContent=proxLivre?proxLivre.getDate()+'/'+meses[proxLivre.getMonth()]:'—';
 }
@@ -316,16 +513,14 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2400);
 }
 
+// init
 carregarConfig();
+blocos=carregarBlocos();
 try{
   const raw=localStorage.getItem(AGENDA_KEY);
-  if(raw){
-    const saved=JSON.parse(raw);
-    Object.entries(saved).forEach(([k,v])=>{calData[k]={hrsLivres:v,eventos:[],status:v>=4?'livre':'ocupado'};});
-    buildGrid();
-    setStatus('ok','Dados do último sincronismo carregados. Clique em "Sincronizar agenda" para atualizar.');
-  }else buildGrid();
-}catch(e){buildGrid();}
+  if(raw)setStatus('ok','Dados do último sincronismo carregados. Sincronize para atualizar.');
+}catch(e){}
+buildGrid();
 </script>
 </body>
 </html>
