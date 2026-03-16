@@ -170,7 +170,7 @@ header{
 
 <header>
   <div class="brand">
-    <img src="alicine.png.png" style="width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:top;">
+    <img src="alicine.png" style="width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:center top;">
     <div>
       <div class="brand-name">ALICINE</div>
       <div class="brand-sub">assistente virtual de produção audiovisual</div>
@@ -391,7 +391,7 @@ function addMsg(html,cls){
   return d;
 }
 function addBot(h){
-  return addMsg(`<div class="bot-row"><img src="alicine.png.png" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${h}</div></div>`);
+  return addMsg(`<div class="bot-row"><img src="alicine.png" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:center top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${h}</div></div>`);
 }
 function addUser(t){return addMsg(`<div class="user-msg"><div class="user-bubble">${t}</div></div>`);}
 function killActive(){const e=app.querySelector('.active');if(e)e.remove();}
@@ -409,7 +409,7 @@ function renderStep(){
     const inp=s.type==='textarea'
       ?`<textarea id="inp" placeholder="${s.ph||''}"></textarea>`
       :`<input type="text" id="inp" placeholder="${s.ph||''}">`;
-    w.innerHTML=`<div class="bot-row"><img src="alicine.png.png" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${botTxt}${eduH}<div class="text-wrap">${inp}<button class="confirm-btn show" style="margin-top:12px;" onclick="submitText()">Continuar →</button></div></div></div>`;
+    w.innerHTML=`<div class="bot-row"><img src="alicine.png" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:center top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${botTxt}${eduH}<div class="text-wrap">${inp}<button class="confirm-btn show" style="margin-top:12px;" onclick="submitText()">Continuar →</button></div></div></div>`;
     app.appendChild(w);
     setTimeout(()=>{
       const el=document.getElementById('inp');
@@ -418,7 +418,7 @@ function renderStep(){
   } else {
     const eduH=s.edu?`<div class="edu-note">${s.edu}</div>`:'';
     const opH=s.opts.map(o=>`<button class="opt" data-val="${o.v}" onclick="selOpt(this,'${o.v}')"><span class="opt-title">${o.t}</span>${o.d?`<span class="opt-desc">${o.d}</span>`:''}<span class="opt-impact">${o.i||''}</span></button>`).join('');
-    w.innerHTML=`<div class="bot-row"><img src="alicine.png.png" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${botTxt}${eduH}<div class="opts">${opH}</div><div class="react-zone" id="rz"></div><button class="confirm-btn" id="cfm" onclick="submitSingle()">Confirmar →</button></div></div>`;
+    w.innerHTML=`<div class="bot-row"><img src="alicine.png" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:center top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${botTxt}${eduH}<div class="opts">${opH}</div><div class="react-zone" id="rz"></div><button class="confirm-btn" id="cfm" onclick="submitSingle()">Confirmar →</button></div></div>`;
     app.appendChild(w);
   }
   w.scrollIntoView({behavior:'smooth',block:'end'});
@@ -503,7 +503,7 @@ function renderResult(){
   const resultHtml=`
 <div class="result-card">
   <div class="r-brand">
-    <img src="alicine.png.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;object-position:top;">
+    <img src="alicine.png" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center top;">
     <div><div class="r-brand-name">ALICINE</div><div class="r-brand-sub">assistente virtual de produção audiovisual ryota</div></div>
   </div>
   <div class="r-title">Briefing de ${a.nome}</div>
