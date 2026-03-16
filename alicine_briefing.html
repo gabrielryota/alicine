@@ -82,12 +82,12 @@ header{
   display:flex;flex-direction:column;gap:3px;
 }
 .opt:hover{border-color:var(--ali3);background:var(--ali2);}
-.opt.sel{border-color:var(--ali);background:var(--ali2);}
+.opt.sel{border-color:#16a34a;background:#f0fdf4;}
 .opt-title{font-weight:500;font-size:14.5px;}
 .opt-desc{font-size:13px;color:var(--ink2);line-height:1.5;}
 .opt-impact{font-size:12px;font-family:'DM Mono',monospace;color:var(--amber);margin-top:2px;}
-.opt.sel .opt-desc{color:#4c1d95;}
-.opt.sel .opt-impact{color:var(--ali);}
+.opt.sel .opt-desc{color:#14532d;}
+.opt.sel .opt-impact{color:#16a34a;}
 
 .react-zone{
   margin-top:12px;padding:13px 16px;
@@ -100,7 +100,7 @@ header{
 
 .confirm-btn{
   margin-top:12px;padding:12px 24px;
-  background:var(--ali);color:#fff;
+  background:#16a34a;color:#fff;
   border:none;border-radius:var(--rm);
   font-size:14.5px;font-family:'DM Sans',sans-serif;font-weight:500;
   cursor:pointer;display:none;transition:opacity 0.15s;
@@ -236,7 +236,7 @@ const steps=[
   ph:'Ex: Ana Lima, Marketing Interno'},
 
 {id:'objetivo',type:'textarea',
-  bot:(a)=>`Olá, <b>${fn(a.nome)}</b>! Boa notícia: você já deu o primeiro passo certo ao usar esse canal.<br><br>Me conta agora — qual é o <b>objetivo</b> desse vídeo? O que você quer que quem assistir entenda, sinta ou faça depois de ver?`,
+  bot:(a)=>`Olá, <b>${fn(a.nome)}</b>! Boa notícia: você já deu o primeiro passo certo ao usar esse canal.<br><br>Me conta agora — qual é o <b>objetivo</b> desse vídeo? O que você espera que as pessoas entendam, sintam ou façam depois de assistir?`,
   ph:'Ex: Mostrar para os colaboradores novos como funciona o processo de onboarding da empresa.',
   edu:'Essa é a pergunta mais importante do briefing. Um objetivo vago como "apresentar o projeto X" costuma gerar vídeos longos, com mensagem diluída e muito retrabalho depois. Quanto mais claro e específico o objetivo, mais direto fica o vídeo — e menor o prazo de produção.'},
 
@@ -257,12 +257,12 @@ const steps=[
   bot:'Que tipo de vídeo você está imaginando?',
   edu:'Cada formato carrega um peso diferente de produção. Não é só sobre a duração — é sobre complexidade técnica, número de etapas e os recursos envolvidos em cada fase.',
   opts:[
-    {v:'hit',t:'Hit',d:'Até 90 segundos. Câmera parada, 1 ou 2 pessoas falando. Edição direta.',i:'Formato mais leve e rápido'},
-    {v:'flow',t:'Flow',d:'Até 90 segundos. Câmera em movimento, trilha, motion básico.',i:'Leve, com um pouco mais de pós-produção'},
-    {v:'stone',t:'Stone',d:'Até 3 minutos. Múltiplos depoimentos, trilha, motion.',i:'Médio — mais logística e edição'},
-    {v:'cruze',t:'Cruze',d:'Até 3 minutos. Depoimentos com tratamento via protocolo de IA.',i:'Médio-alto — inclui etapa de IA'},
-    {v:'infinity',t:'Infinity',d:'3 minutos ou mais. Sem limite de pessoas, IA completa, escopo aberto.',i:'Alto — maior complexidade'},
-    {v:'cover',t:'Cover',d:'Cobertura de evento ao vivo. Escopo variável.',i:'Variável — requer briefing específico'},
+    {v:'hit',t:'Hit',d:'Até 90s. Câmera parada, 1 ou 2 pessoas. Edição base: intro, montagem, cor, prévia, revisão e finalização. Legenda e upload.',i:'Formato mais leve e rápido'},
+    {v:'flow',t:'Flow',d:'Até 90s. Câmera em movimento e/ou parada. Edição base com trilha e motion. Legenda e upload.',i:'Leve, com um pouco mais de pós-produção'},
+    {v:'stone',t:'Stone',d:'Até 3 minutos. Câmera em movimento e/ou parada, 1 a 5 depoimentos. Edição base com trilha e motion. Legenda e upload.',i:'Médio — mais logística e edição'},
+    {v:'cruze',t:'Cruze',d:'Até 3 minutos. 1 a 5 depoimentos com protocolo de IA: cenários, personagens e efeitos. Edição base com trilha e motion. Legenda e upload.',i:'Médio-alto — inclui criação de protocolo de IA'},
+    {v:'infinity',t:'Infinity',d:'Até 3 minutos ou mais. Sem limite de pessoas, protocolo de IA completo. Edição base com trilha e motion. Legenda e upload.',i:'Alto — maior complexidade'},
+    {v:'cover',t:'Cover',d:'Cobertura de eventos em geral. Escopo, equipe e entregáveis variam conforme o evento.',i:'Variável — requer briefing específico'},
     {v:'nd',t:'Ainda não sei',d:'Não tenho clareza do formato ideal para o que preciso.',i:'Será definido pela produção'}
   ],
   reacts:{
