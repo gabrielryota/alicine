@@ -88,15 +88,8 @@ header{
 .opt-impact{font-size:12px;font-family:'DM Mono',monospace;color:var(--amber);margin-top:2px;}
 .opt.sel .opt-desc{color:#14532d;}
 .opt.sel .opt-impact{color:#16a34a;}
-
-.react-zone{
-  margin-top:12px;padding:13px 16px;
-  background:var(--paper);border:1px solid var(--paper3);
-  border-radius:var(--rm);font-size:14px;line-height:1.65;
-  color:var(--ink2);display:none;
-}
-.react-zone.show{display:block;animation:fadeUp 0.2s ease;}
-.react-zone strong{color:var(--ink);font-weight:500;}
+.opt-react{font-size:13px;color:var(--ink3);line-height:1.55;margin-top:6px;padding-top:6px;border-top:1px solid var(--paper3);display:block;}
+.opt.sel .opt-react{color:#14532d;border-color:#bbf7d0;}
 
 .confirm-btn{
   margin-top:12px;padding:12px 24px;
@@ -417,8 +410,8 @@ function renderStep(){
     },80);
   } else {
     const eduH=s.edu?`<div class="edu-note">${s.edu}</div>`:'';
-    const opH=s.opts.map(o=>`<button class="opt" data-val="${o.v}" onclick="selOpt(this,'${o.v}')"><span class="opt-title">${o.t}</span>${o.d?`<span class="opt-desc">${o.d}</span>`:''}<span class="opt-impact">${o.i||''}</span></button>`).join('');
-    w.innerHTML=`<div class="bot-row"><img src="alicine.png" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:center top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${botTxt}${eduH}<div class="opts">${opH}</div><div class="react-zone" id="rz"></div><button class="confirm-btn" id="cfm" onclick="submitSingle()">Confirmar →</button></div></div>`;
+    const opH=s.opts.map(o=>{const react=s.reacts&&s.reacts[o.v]?`<span class="opt-react">${s.reacts[o.v]}</span>`:'';return `<button class="opt" data-val="${o.v}" onclick="selOpt(this,'${o.v}')"><span class="opt-title">${o.t}</span>${o.d?`<span class="opt-desc">${o.d}</span>`:''}<span class="opt-impact">${o.i||''}</span>${react}</button>`;}).join('');
+    w.innerHTML=`<div class="bot-row"><img src="alicine.png" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:center top;flex-shrink:0;margin-top:2px;"><div class="bot-bubble">${botTxt}${eduH}<div class="opts">${opH}</div><button class="confirm-btn" id="cfm" onclick="submitSingle()">Confirmar →</button></div></div>`;
     app.appendChild(w);
   }
   w.scrollIntoView({behavior:'smooth',block:'end'});
@@ -428,12 +421,6 @@ function selOpt(el,val){
   document.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
   state.sel=val;
-  const s=steps[state.step];
-  const rz=document.getElementById('rz');
-  if(rz&&s.reacts&&s.reacts[val]){
-    rz.innerHTML='<strong>O que isso significa na prática:</strong> '+s.reacts[val];
-    rz.classList.add('show');
-  }
   const cfm=document.getElementById('cfm');
   if(cfm)cfm.classList.add('show');
 }
