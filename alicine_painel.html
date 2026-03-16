@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALICINE — Painel de Briefings</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#12110f;--ink2:#56534a;--ink3:#9e9b92;
+  --paper:#f8f6f1;--paper2:#efecea;--paper3:#e2ddd6;
+  --ali:#8b5cf6;--ali2:#ede9fe;--ali3:#c4b5fd;
+  --green:#16a34a;--amber:#b45309;--red:#dc2626;
+  --r:6px;--rm:10px;--rl:16px;
+}
+html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);}
+header{border-bottom:1px solid var(--paper3);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);position:sticky;top:0;z-index:10;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-img{width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:center top;}
+.brand-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:500;color:var(--ink);}
+.brand-name span{color:var(--ali);}
+.brand-sub{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);}
+.tag{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);background:var(--paper2);border:1px solid var(--paper3);padding:4px 10px;border-radius:100px;}
+main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;}
+.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:600;}
+.page-count{font-size:13px;font-family:'DM Mono',monospace;color:var(--ink3);}
+.filters{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.filter-btn{padding:7px 16px;border:1px solid var(--paper3);border-radius:100px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink2);background:var(--paper);cursor:pointer;transition:all 0.15s;}
+.filter-btn:hover{border-color:var(--ink3);}
+.filter-btn.active{border-color:var(--ali);background:var(--ali2);color:#4c1d95;}
+.empty{text-align:center;padding:4rem 2rem;color:var(--ink3);}
+.empty-title{font-size:16px;font-weight:500;color:var(--ink2);margin-bottom:8px;}
+.empty-sub{font-size:14px;}
+
+/* briefing card */
+.bcard{background:var(--paper);border:1px solid var(--paper3);border-radius:var(--rl);margin-bottom:10px;overflow:hidden;transition:border-color 0.15s;}
+.bcard:hover{border-color:var(--ink3);}
+.bcard.novo{border-left:3px solid var(--ali);}
+.bcard.em-andamento{border-left:3px solid var(--amber);}
+.bcard.concluido{border-left:3px solid var(--green);}
+.bcard-head{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px;}
+.bcard-left{flex:1;min-width:0;}
+.bcard-name{font-weight:500;font-size:15px;color:var(--ink);margin-bottom:3px;}
+.bcard-meta{font-size:12.5px;color:var(--ink3);font-family:'DM Mono',monospace;}
+.bcard-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.status-badge{font-size:11px;padding:3px 10px;border-radius:100px;font-weight:500;cursor:pointer;}
+.status-novo{background:var(--ali2);color:#4c1d95;}
+.status-em-andamento{background:#fef3c7;color:#78350f;}
+.status-concluido{background:#dcfce7;color:#14532d;}
+.chevron{font-size:12px;color:var(--ink3);transition:transform 0.2s;}
+.bcard.open .chevron{transform:rotate(180deg);}
+.bcard-body{display:none;padding:0 18px 18px;border-top:1px solid var(--paper3);}
+.bcard.open .bcard-body{display:block;}
+.divider{border:none;border-top:1px solid var(--paper3);margin:14px 0;}
+.r-label{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.08em;color:var(--ink3);text-transform:uppercase;margin-bottom:5px;}
+.r-val{font-size:14px;color:var(--ink);line-height:1.65;}
+.badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:100px;font-weight:500;margin:2px 3px 2px 0;}
+.badge-purple{background:var(--ali2);color:#4c1d95;}
+.badge-amber{background:#fef3c7;color:#78350f;}
+.prazo-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;}
+.prazo-mini{background:var(--paper2);border:1px solid var(--paper3);border-radius:var(--rm);padding:12px;}
+.prazo-mini .num{font-size:20px;font-weight:300;font-family:'DM Mono',monospace;color:var(--ink);}
+.prazo-mini .sub{font-size:11px;color:var(--ink3);margin-top:2px;}
+.prazo-mini.destaque{border-color:var(--ali);background:var(--ali2);}
+.prazo-mini.destaque .num{color:var(--ali);font-size:16px;line-height:1.4;}
+.alert-box{background:#fffbeb;border-left:3px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:9px 13px;font-size:13px;line-height:1.6;color:#78350f;margin-top:6px;}
+.missing-box{background:#fef2f2;border-left:3px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:9px 13px;font-size:13px;line-height:1.6;color:#7f1d1d;margin-top:6px;}
+.gargalo{background:#fef3c7;border:1px solid #fcd34d;border-radius:var(--rm);padding:10px 14px;font-size:13px;color:#78350f;margin-top:8px;}
+.action-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.action-btn{padding:8px 16px;border:1px solid var(--paper3);border-radius:var(--rm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink2);background:var(--paper);cursor:pointer;transition:all 0.15s;}
+.action-btn:hover{border-color:var(--ink3);color:var(--ink);}
+.action-btn.danger{color:var(--red);border-color:#fecaca;}
+.action-btn.danger:hover{background:#fef2f2;}
+.status-select{padding:7px 12px;border:1px solid var(--paper3);border-radius:var(--rm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--paper);cursor:pointer;}
+.status-select:focus{outline:none;border-color:var(--ali3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img src="alicine.png" class="brand-img">
+    <div>
+      <div class="brand-name">ALICINE <span>/ painel</span></div>
+      <div class="brand-sub">briefings recebidos</div>
+    </div>
+  </div>
+  <span class="tag">acesso restrito</span>
+</header>
+
+<main>
+  <div class="page-header">
+    <div>
+      <div class="page-title">Briefings recebidos</div>
+    </div>
+    <div class="page-count" id="pageCount"></div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="todos" onclick="setFilter('todos',this)">Todos</button>
+    <button class="filter-btn" data-filter="novo" onclick="setFilter('novo',this)">Novos</button>
+    <button class="filter-btn" data-filter="em-andamento" onclick="setFilter('em-andamento',this)">Em andamento</button>
+    <button class="filter-btn" data-filter="concluido" onclick="setFilter('concluido',this)">Concluídos</button>
+  </div>
+
+  <div id="lista"></div>
+</main>
+
+<script>
+const KEY='alicine_briefings_v1';
+let filtroAtivo='todos';
+
+const LBL={
+  script:{plot:'Plot',core:'Core',creed:'Creed'},
+  video:{hit:'Hit',flow:'Flow',stone:'Stone',cruze:'Cruze',infinity:'Infinity',cover:'Cover',nd:'A definir'},
+  pessoas:{'1':'1 pessoa','2':'2 pessoas','3a5':'3 a 5 pessoas','6+':'6 ou mais','none':'Nenhuma'},
+  motion:{nao:'Sem motion',simples:'Motion simples',elaborado:'Motion elaborado'},
+  ia:{nao:'Sem IA',simples:'IA simples',complexo:'IA complexo'},
+  prazo:{nao:'Sem data',urgente:'< 3 dias',curto:'3–7 dias',ok:'> 7 dias'}
+};
+
+function carregar(){
+  try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):[];}catch(e){return [];}
+}
+
+function salvar(lista){
+  localStorage.setItem(KEY,JSON.stringify(lista));
+}
+
+function setFilter(f,btn){
+  filtroAtivo=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLista();
+}
+
+function toggleCard(id){
+  const card=document.getElementById('card_'+id);
+  if(card)card.classList.toggle('open');
+}
+
+function mudarStatus(id,val){
+  const lista=carregar();
+  const item=lista.find(b=>b.id===id);
+  if(item){item.status=val;salvar(lista);renderLista();}
+}
+
+function deletar(id){
+  if(!confirm('Remover esse briefing?'))return;
+  const lista=carregar().filter(b=>b.id!==id);
+  salvar(lista);renderLista();
+}
+
+function renderLista(){
+  const todos=carregar();
+  const filtrados=filtroAtivo==='todos'?todos:todos.filter(b=>b.status===filtroAtivo);
+  const lista=document.getElementById('lista');
+  const count=document.getElementById('pageCount');
+  count.textContent=todos.length+' briefing'+(todos.length!==1?'s':'');
+
+  if(!todos.length){
+    lista.innerHTML=`<div class="empty"><div class="empty-title">Nenhum briefing ainda</div><div class="empty-sub">Quando a equipe enviar uma demanda pela ALICINE, ela aparece aqui.</div></div>`;
+    return;
+  }
+  if(!filtrados.length){
+    lista.innerHTML=`<div class="empty"><div class="empty-title">Nenhum briefing com esse status</div></div>`;
+    return;
+  }
+
+  lista.innerHTML=filtrados.map(b=>{
+    const diasStr=b.diasMin===b.diasMax?b.diasMin+'':b.diasMin+'–'+b.diasMax;
+    const horasStr=b.minH===b.maxH?b.minH+'':b.minH+'–'+b.maxH;
+    const statusLbl={novo:'Novo','em-andamento':'Em andamento',concluido:'Concluído'}[b.status]||'Novo';
+    const statusCls='status-'+(b.status||'novo');
+    const alertsH=(b.alertas||[]).map(x=>`<div class="alert-box">${x}</div>`).join('');
+    const missingH=(b.faltando||[]).map(x=>`<div class="missing-box">${x}</div>`).join('');
+    const obsH=b.obs&&b.obs.trim().length>2?`<hr class="divider"><div><div class="r-label">Observações</div><div class="r-val">${b.obs}</div></div>`:'';
+
+    return `
+<div class="bcard ${b.status||'novo'}" id="card_${b.id}">
+  <div class="bcard-head" onclick="toggleCard('${b.id}')">
+    <div class="bcard-left">
+      <div class="bcard-name">${b.nome}</div>
+      <div class="bcard-meta">${b.hoje} · ${LBL.video[b.video]||b.video} · ${diasStr} dias úteis</div>
+    </div>
+    <div class="bcard-right">
+      <span class="status-badge ${statusCls}" onclick="event.stopPropagation()">${statusLbl}</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="bcard-body">
+    <div style="margin-top:14px;"><div class="r-label">Objetivo</div><div class="r-val">${b.objetivo}</div></div>
+    <hr class="divider">
+    <div><div class="r-label">Classificação</div><div style="margin-top:5px;">
+      <span class="badge badge-purple">Script: ${LBL.script[b.script]||b.script}</span>
+      <span class="badge badge-purple">Vídeo: ${LBL.video[b.video]||b.video}</span>
+      <span class="badge badge-amber">Pessoas: ${LBL.pessoas[b.pessoas]||b.pessoas}</span>
+      <span class="badge badge-amber">Motion: ${LBL.motion[b.motion]||b.motion}</span>
+      <span class="badge badge-amber">IA: ${LBL.ia[b.ia]||b.ia}</span>
+      <span class="badge badge-amber">Prazo ref.: ${LBL.prazo[b.prazo]||b.prazo}</span>
+    </div></div>
+    <hr class="divider">
+    <div><div class="r-label">Estimativa de prazo</div>
+      <div class="prazo-row">
+        <div class="prazo-mini"><div class="num">${diasStr}</div><div class="sub">dias úteis</div></div>
+        <div class="prazo-mini"><div class="num">${horasStr}h</div><div class="sub">carga total</div></div>
+        <div class="prazo-mini destaque"><div class="num">${b.entregaStr||'—'}</div><div class="sub">data estimada</div></div>
+      </div>
+      <div class="gargalo"><strong>Gargalo:</strong> ${b.gargalo}</div>
+      ${alertsH}
+    </div>
+    ${missingH?`<hr class="divider"><div><div class="r-label" style="color:var(--red);">Informações em falta</div>${missingH}</div>`:''}
+    ${obsH}
+    <hr class="divider">
+    <div class="action-row">
+      <div>
+        <div class="r-label" style="margin-bottom:6px;">Mudar status</div>
+        <select class="status-select" onchange="mudarStatus('${b.id}',this.value)">
+          <option value="novo" ${(b.status||'novo')==='novo'?'selected':''}>Novo</option>
+          <option value="em-andamento" ${b.status==='em-andamento'?'selected':''}>Em andamento</option>
+          <option value="concluido" ${b.status==='concluido'?'selected':''}>Concluído</option>
+        </select>
+      </div>
+      <button class="action-btn danger" style="margin-top:auto;" onclick="deletar('${b.id}')">Remover</button>
+    </div>
+  </div>
+</div>`;
+  }).join('');
+}
+
+renderLista();
+</script>
+</body>
+</html>

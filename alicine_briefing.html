@@ -155,6 +155,9 @@ header{
 .tl-bar{height:100%;background:var(--ali);border-radius:3px;}
 .tl-hrs{font-size:12px;font-family:'DM Mono',monospace;color:var(--ink2);min-width:32px;text-align:right;}
 
+.send-btn{margin-top:1rem;padding:13px 28px;background:var(--ali);color:#fff;border:none;border-radius:var(--rm);font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity 0.15s;}
+.send-btn:hover{opacity:0.88;}
+.send-btn:disabled{opacity:0.5;cursor:default;}
 .restart-btn{margin-top:1.5rem;padding:11px 20px;background:transparent;border:1px solid var(--paper3);border-radius:var(--rm);font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--ink3);cursor:pointer;transition:all 0.15s;}
 .restart-btn:hover{border-color:var(--ink3);color:var(--ink);}
 </style>
@@ -531,12 +534,42 @@ function renderResult(){
 
   addBot('Pronto! Seu briefing está completo. Aqui está o resumo com tudo que a produção precisa saber.'+resultHtml);
 
+  const sendWrap=document.createElement('div');
+  sendWrap.className='msg';
+  sendWrap.innerHTML=`<button class="send-btn" id="sendBtn" onclick="enviarBriefing()">Enviar para a produção →</button>`;
+  app.appendChild(sendWrap);
+
   const rb=document.createElement('button');
   rb.className='restart-btn msg';
   rb.textContent='Iniciar nova demanda';
   rb.onclick=()=>{state.step=0;state.answers={};state.sel=null;app.innerHTML='';renderStep();};
   app.appendChild(rb);
-  setTimeout(()=>rb.scrollIntoView({behavior:'smooth',block:'end'}),100);
+  setTimeout(()=>sendWrap.scrollIntoView({behavior:'smooth',block:'end'}),100);
+  window._briefingPayload={answers:a,prazo:p,entrega,hoje};
+}
+
+function enviarBriefing(){
+  const {answers:a,prazo:p,entrega,hoje}=window._briefingPayload;
+  const id='briefing_'+Date.now();
+  const registro={
+    id,timestamp:Date.now(),hoje,
+    nome:a.nome,objetivo:a.objetivo,
+    script:a.script,video:a.video,pessoas:a.pessoas,
+    motion:a.motion,ia:a.ia,prazo:a.prazo,obs:a.obs||'',
+    minH:p.minH,maxH:p.maxH,diasMin:p.diasMin,diasMax:p.diasMax,
+    gargalo:p.gargalo,alertas:p.alertas,faltando:p.faltando,
+    entregaStr:entrega.hasAgenda?(entrega.agendaInsuficiente?'Agenda insuficiente':entrega.endDateStr):'Sem agenda configurada',
+    status:'novo'
+  };
+  try{
+    const raw=localStorage.getItem('alicine_briefings_v1');
+    const lista=raw?JSON.parse(raw):[];
+    lista.unshift(registro);
+    localStorage.setItem('alicine_briefings_v1',JSON.stringify(lista));
+    const btn=document.getElementById('sendBtn');
+    if(btn){btn.textContent='Enviado!';btn.disabled=true;btn.style.background='#16a34a';}
+    setTimeout(()=>addBot('Briefing enviado com sucesso! A produção vai analisar e entrar em contato em breve.'),400);
+  }catch(e){alert('Erro ao salvar. Tente novamente.');}
 }
 
 const app=document.getElementById('app');
