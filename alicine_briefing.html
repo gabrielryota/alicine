@@ -195,34 +195,24 @@ function pad(n){return n<10?'0'+n:''+n;}
 function ds(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function fmtDate(d){return semana[d.getDay()]+', '+d.getDate()+' de '+meses[d.getMonth()];}
 
-function calcEntrega(totalHoras){
+function calcEntrega(diasNecessarios){
   const agenda=loadAgenda();
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const days=Object.keys(agenda)
     .filter(k=>new Date(k+'T00:00:00')>=hoje)
     .sort();
-
-  if(!days.length)return{hasAgenda:false,totalHoras};
-
-  let rem=totalHoras;
-  const usados=[];
+  if(!days.length)return{hasAgenda:false};
+  let diasContados=0,ultimoDia=null;
   for(const k of days){
-    if(rem<=0)break;
-    const avail=agenda[k];
-    const used=Math.min(avail,rem);
-    usados.push({k,avail,used});
-    rem-=used;
+    if(agenda[k]>0){diasContados++;ultimoDia=k;}
+    if(diasContados>=diasNecessarios)break;
   }
-
-  const last=usados[usados.length-1];
-  const endDate=last?new Date(last.k+'T00:00:00'):null;
+  const endDate=ultimoDia?new Date(ultimoDia+'T00:00:00'):null;
   return{
-    hasAgenda:true,totalHoras,
-    daysUsed:usados.length,
-    endDate,endDateStr:endDate?fmtDate(endDate):'—',
-    agendaInsuficiente:rem>0,horasRestantes:Math.round(rem),
-    timeline:usados.slice(0,6),
-    maxAvail:Math.max(...usados.map(u=>u.avail))
+    hasAgenda:true,
+    endDate,
+    endDateStr:endDate?fmtData(endDate):'—',
+    agendaInsuficiente:diasContados<diasNecessarios
   };
 }
 
@@ -324,29 +314,75 @@ const steps=[
 
 function fn(n){return n?n.split(/[,\s]/)[0].trim():'';}
 
+function addDiasUteis(data, dias){
+  const d=new Date(data);
+  let added=0;
+  while(added<dias){
+    d.setDate(d.getDate()+1);
+    const dow=d.getDay();
+    if(dow!==0&&dow!==6)added++;
+  }
+  return d;
+}
+
+function fmtData(d){
+  const sem=['dom','seg','ter','qua','qui','sex','sáb'];
+  const mes=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return sem[d.getDay()]+', '+d.getDate()+' de '+mes[d.getMonth()];
+}
+
 function calc(a){
-  let minH=0,maxH=0,alertas=[],faltando=[],gargalo='';
-  if(a.script==='plot'){minH+=1;maxH+=1;}
-  else if(a.script==='core'){minH+=4;maxH+=6;}
-  else if(a.script==='creed'){minH+=8;maxH+=16;alertas.push('O roteiro precisa ser criado do zero. Esse é o item de maior incerteza de prazo nesse projeto.');}
-  const vm={hit:[3,4],flow:[3,6],stone:[16,24],cruze:[32,48],cover:[8,24],nd:[4,8]};
-  const v=vm[a.video]||[4,8];minH+=v[0];maxH+=v[1];
-  if(a.pessoas==='3a5'){minH+=1.5;maxH+=2.5;}
-  else if(a.pessoas==='6+'){minH+=2.5;maxH+=4;alertas.push('Com 6 ou mais pessoas em cena, a logística de gravação equivale a um dia completo de produção.');}
-  if(a.motion==='simples'){minH+=2;maxH+=4;}
-  else if(a.motion==='elaborado'){minH+=8;maxH+=16;alertas.push('Efeitos gráficos elaborados podem ser o modificador mais pesado desse projeto.');}
-  minH+=4;maxH+=8;
+  let diasMin=0,diasMax=0,alertas=[],faltando=[],gargalo='';
+
+  // Base por formato + script
+  const base={
+    hit:  {plot:[1,1], core:[2,2],  creed:[3,3]},
+    flow: {plot:[2,2], core:[3,3],  creed:[4,5]},
+    stone:{plot:[3,3], core:[4,4],  creed:[5,6]},
+    cruze:{plot:[4,4], core:[5,6],  creed:[7,8]},
+    cover:{plot:[3,5], core:[4,6],  creed:[5,7]},
+    nd:   {plot:[2,3], core:[3,4],  creed:[4,6]}
+  };
+
+  const script=a.script||'plot';
+  const video=a.video||'nd';
+  const b=(base[video]||base.nd)[script]||[2,4];
+  diasMin=b[0]; diasMax=b[1];
+
+  // Modificadores em dias (teto +2 dias total)
+  let mod=0;
+  if(a.pessoas==='6+'){mod+=1;alertas.push('Com 6 ou mais pessoas em cena, a logística de gravação equivale a um dia completo.');}
+  if(a.motion==='elaborado'){mod+=1;alertas.push('Efeitos gráficos elaborados adicionam tempo significativo de pós-produção.');}
+  mod=Math.min(mod,2);
+  diasMin+=mod; diasMax+=mod;
+
+  // Alertas de prazo
   if(a.prazo==='urgente') alertas.push('Prazo de menos de 3 dias úteis é crítico para esse escopo. A produção precisa confirmar viabilidade antes de qualquer compromisso.');
-  else if(a.prazo==='curto') alertas.push('Prazo de 3 a 7 dias pode ser viável, mas depende da agenda e do escopo total. Confirmar com a produção.');
+  else if(a.prazo==='curto') alertas.push('Prazo de 3 a 7 dias pode ser viável dependendo do escopo. Confirmar com a produção.');
+
+  // Informações em falta
   if(!a.objetivo||a.objetivo.trim().length<15) faltando.push('O objetivo do vídeo está vago — detalhe melhor o que você quer comunicar.');
-  if(a.video==='nd') faltando.push('Formato de vídeo não definido — a estimativa de prazo ficará em aberto.');
-  if(a.script==='creed'&&(!a.obs||a.obs.trim().length<10)) faltando.push('Roteiro a criar do zero sem nenhum contexto ou referência informada.');
-  if(a.motion==='elaborado') gargalo='Efeitos gráficos elaborados';
-  else if(a.script==='creed') gargalo='Criação de roteiro (Creed)';
+  if(a.video==='nd') faltando.push('Formato de vídeo não definido — estimativa de prazo ficará em aberto.');
+  if(a.script==='creed'&&(!a.obs||a.obs.trim().length<10)) faltando.push('Roteiro a criar do zero sem contexto ou referência informada.');
+
+  // Gargalo
+  if(a.script==='creed') gargalo='Criação de roteiro do zero';
+  else if(a.motion==='elaborado') gargalo='Efeitos gráficos elaborados';
   else if(a.video==='cruze') gargalo='Volume e complexidade do formato Cruze';
   else if(a.pessoas==='6+') gargalo='Logística de captação com muitas pessoas';
   else gargalo='Aprovações, revisões e ajustes finais';
-  return{minH:Math.round(minH),maxH:Math.round(maxH),diasMin:Math.ceil(minH/6),diasMax:Math.ceil(maxH/5),alertas,faltando,gargalo};
+
+  // Calcular datas a partir de hoje
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const dataEntregaInterna=addDiasUteis(hoje,diasMax);
+  const dataPublicacao=addDiasUteis(dataEntregaInterna,1);
+
+  return{
+    diasMin,diasMax,alertas,faltando,gargalo,
+    dataEntregaInterna,dataPublicacao,
+    entregaInternaStr:fmtData(dataEntregaInterna)+' até 16h',
+    publicacaoStr:fmtData(dataPublicacao)
+  };
 }
 
 const LBL={
@@ -438,38 +474,33 @@ function renderResult(){
   document.getElementById('step-lbl').textContent='briefing completo';
   const a=state.answers;
   const p=calc(a);
-  const entrega=calcEntrega(p.maxH);
+  const entrega=calcEntrega(p.diasMax);
   const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
 
-  const diasStr=p.diasMin===p.diasMax?p.diasMin+'':p.diasMin+'–'+p.diasMax;
-  const horasStr=p.minH===p.maxH?p.minH+'':p.minH+'–'+p.maxH;
+  const diasStr=p.diasMin===p.diasMax?p.diasMin+' dia'+(p.diasMin>1?'s úteis':' útil'):p.diasMin+'–'+p.diasMax+' dias úteis';
 
-  // build timeline html
-  let timelineHtml='';
-  if(entrega.hasAgenda&&entrega.timeline&&entrega.timeline.length){
-    const maxA=entrega.maxAvail||8;
-    const rows=entrega.timeline.map(({k,avail,used})=>{
-      const d=new Date(k+'T00:00:00');
-      const pct=Math.round((used/maxA)*100);
-      return `<div class="tl-row"><div class="tl-date">${semana[d.getDay()]}, ${d.getDate()}/${meses[d.getMonth()]}</div><div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%"></div></div><div class="tl-hrs">${Math.round(used*10)/10}h</div></div>`;
-    }).join('');
-    timelineHtml=`<div style="margin-top:12px;"><div class="r-label">Distribuição por dia</div><div style="margin-top:6px;">${rows}</div></div>`;
-  }
+  // datas baseadas na agenda ou no cálculo simples
+  let entregaInternaStr=p.entregaInternaStr;
+  let publicacaoStr=p.publicacaoStr;
+  let agendaNote='';
 
-  // entrega card
-  let entregaHtml='';
-  if(entrega.hasAgenda){
-    if(entrega.agendaInsuficiente){
-      entregaHtml=`<div class="prazo-card" style="grid-column:span 1"><div class="prazo-num" style="font-size:16px;line-height:1.4;">${entrega.endDateStr||'—'}</div><div class="prazo-sub">até onde a agenda cobre</div></div>
-      <div class="agenda-warn">A agenda disponível não cobre todo o escopo desse projeto. Ainda faltam ~${entrega.horasRestantes}h sem dia alocado. A produção precisa atualizar a disponibilidade ou o prazo será maior.</div>`;
-    } else {
-      entregaHtml=`<div class="prazo-card destaque"><div class="prazo-num">${entrega.endDateStr}</div><div class="prazo-sub">data estimada de entrega</div></div>
-      <div class="agenda-ok">Data calculada com base na agenda de produção disponível. Sujeita a ajustes conforme aprovações e revisões.</div>`;
-    }
+  if(entrega.hasAgenda&&!entrega.agendaInsuficiente){
+    // usar data da agenda + D-1
+    const dataAgenda=entrega.endDate;
+    const dataPublic=new Date(dataAgenda);
+    dataPublic.setDate(dataPublic.getDate()+1);
+    // pular fim de semana
+    while(dataPublic.getDay()===0||dataPublic.getDay()===6) dataPublic.setDate(dataPublic.getDate()+1);
+    entregaInternaStr=fmtData(dataAgenda)+' até 16h';
+    publicacaoStr=fmtData(dataPublic);
+    agendaNote=`<div class="agenda-ok" style="margin-top:8px;">Datas calculadas com base na agenda de produção sincronizada.</div>`;
+  } else if(entrega.hasAgenda&&entrega.agendaInsuficiente){
+    agendaNote=`<div class="agenda-warn" style="margin-top:8px;">A agenda não cobre todo o escopo. Datas estimadas pelo prazo padrão — atualize a agenda para maior precisão.</div>`;
   } else {
-    entregaHtml=`<div class="prazo-card" style="border:1px dashed var(--paper3)"><div class="prazo-num" style="font-size:18px;color:var(--ink3);">sem agenda</div><div class="prazo-sub">configure no painel de agenda</div></div>`;
+    agendaNote=`<div style="margin-top:8px;font-size:13px;color:var(--ink3);">Configure a agenda de produção para datas mais precisas.</div>`;
   }
 
+  const timelineHtml='';
   const alertsH=p.alertas.length?p.alertas.map(x=>`<div class="alert-box">${x}</div>`).join(''):'';
   const missingH=p.faltando.length?`<hr class="divider"><div><div class="r-label" style="color:var(--red);">Informações em falta</div>${p.faltando.map(x=>`<div class="missing-box">${x}</div>`).join('')}</div>`:'';
   const obsH=a.obs&&a.obs.trim().length>3?`<hr class="divider"><div><div class="r-label">Observações adicionais</div><div class="r-val">${a.obs}</div></div>`:'';
@@ -494,13 +525,19 @@ function renderResult(){
   <hr class="divider">
   <div><div class="r-label">Estimativa de prazo</div>
     <div class="prazo-grid">
-      <div class="prazo-card"><div class="prazo-num">${diasStr}</div><div class="prazo-sub">dias úteis de trabalho</div></div>
-      <div class="prazo-card"><div class="prazo-num">${horasStr}h</div><div class="prazo-sub">carga total estimada</div></div>
-      ${entregaHtml}
+      <div class="prazo-card"><div class="prazo-num">${diasStr}</div><div class="prazo-sub">prazo de produção</div></div>
+      <div class="prazo-card destaque">
+        <div class="prazo-num" style="font-size:15px;line-height:1.4;">${entregaInternaStr}</div>
+        <div class="prazo-sub" style="color:#6d28d9;">entrega interna — D-1 às 16h</div>
+      </div>
+      <div class="prazo-card">
+        <div class="prazo-num" style="font-size:15px;line-height:1.4;">${publicacaoStr}</div>
+        <div class="prazo-sub">data de publicação</div>
+      </div>
     </div>
-    <div class="gargalo-box"><strong>Principal gargalo:</strong> ${p.gargalo}</div>
+    ${agendaNote}
+    <div class="gargalo-box" style="margin-top:10px;"><strong>Principal gargalo:</strong> ${p.gargalo}</div>
     ${alertsH}
-    ${timelineHtml}
   </div>
   ${missingH}
   ${obsH}
@@ -508,7 +545,7 @@ function renderResult(){
   <div><div class="r-label">O que acontece agora</div>
     <div class="edu-final">
       Seu briefing está organizado e pronto para ir à produção.<br><br>
-      <strong>Importante:</strong> a data estimada acima é calculada com base na agenda de produção disponível. O prazo final só pode ser confirmado depois que a produção verificar outros projetos em andamento e aprovar o início.<br><br>
+      <strong>Importante:</strong> as datas acima são estimativas. O prazo final só pode ser confirmado depois que a produção verificar a agenda e os projetos em andamento.<br><br>
       ${p.faltando.length?'<strong>Atenção:</strong> há informações em falta nesse briefing. Completar esses itens antes de enviar evita atrasos no início do projeto.<br><br>':''}
       Se tiver dúvida sobre algum ponto, releia o resumo acima — ele reflete exatamente o que a produção vai receber.
     </div>
