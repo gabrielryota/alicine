@@ -176,6 +176,7 @@ function renderLista(){
     const alertsH=(b.alertas||[]).map(x=>`<div class="alert-box">${x}</div>`).join('');
     const missingH=(b.faltando||[]).map(x=>`<div class="missing-box">${x}</div>`).join('');
     const obsH=b.obs&&b.obs.trim().length>2?`<hr class="divider"><div><div class="r-label">Observações</div><div class="r-val">${b.obs}</div></div>`:'';
+    const linksH=b.links&&b.links.trim().length>2?`<hr class="divider"><div><div class="r-label">Referências e materiais</div><div class="r-val" style="font-size:13.5px;white-space:pre-line;">${b.links}</div></div>`:'';
 
     return `
 <div class="bcard ${b.status||'novo'}" id="card_${b.id}">
@@ -212,6 +213,7 @@ function renderLista(){
     </div>
     ${missingH?`<hr class="divider"><div><div class="r-label" style="color:var(--red);">Informações em falta</div>${missingH}</div>`:''}
     ${obsH}
+    ${linksH}
     <hr class="divider">
     <div class="action-row">
       <div>

@@ -182,7 +182,7 @@ header{
 
 <script>
 const KEY='alicine_agenda_v1';
-const TOTAL=8;
+const TOTAL=9;
 const state={step:0,answers:{},sel:null};
 
 const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
@@ -306,10 +306,15 @@ const steps=[
     curto:'De 3 a 7 dias é viável para formatos leves com escopo bem definido, mas pode ficar apertado. Vou incluir um alerta se o escopo não couber nessa janela.',
     ok:'Mais de 7 dias é um horizonte confortável para a maioria dos formatos. Boa base para planejamento.'}},
 
+{id:'links',type:'textarea',
+  bot:'Tem algum material de referência para compartilhar? Links de vídeos, documentos institucionais, peças de campanha ou informações sobre quem vai aparecer são muito bem-vindos.',
+  ph:'Ex: https://drive.google.com/... — apresentação institucional base\nhttps://youtube.com/... — tom e ritmo que quero seguir\nFernanda Alves, gerente de RH, 10 anos de empresa, tom descontraído',
+  edu:'Cole os links e descreva brevemente cada um — por exemplo: "esse é o tom que quero", "esse é o material institucional base", "essa é a bio da apresentadora". Quanto mais contexto você trouxer, mais alinhado o resultado vai estar com o que você imagina.'},
+
 {id:'obs',type:'textarea',
-  bot:'Última pergunta! Tem alguma informação que ajude a produção a entender melhor o contexto? Locação específica, quem vai aparecer, referência de vídeo, restrição técnica?',
-  ph:'Ex: A gravação precisa ser no auditório da sede. A apresentadora é a Fernanda Alves, gerente de RH. Referência: tom do vídeo de onboarding da Netflix.',
-  edu:'Quanto mais contexto, mais preciso o planejamento. Informações como locação, pessoa responsável e referências evitam surpresas na gravação e na edição.'}
+  bot:'Última pergunta! Tem mais alguma informação que ajude a produção? Locação específica, restrição técnica, data de evento?',
+  ph:'Ex: A gravação precisa ser no auditório da sede. Evitar gravações após as 17h.',
+  edu:'Informações como locação e restrições de horário evitam surpresas na gravação e ajudam a confirmar o prazo com mais precisão.'}
 ];
 
 function fn(n){return n?n.split(/[,\s]/)[0].trim():'';}
@@ -504,6 +509,7 @@ function renderResult(){
   const alertsH=p.alertas.length?p.alertas.map(x=>`<div class="alert-box">${x}</div>`).join(''):'';
   const missingH=p.faltando.length?`<hr class="divider"><div><div class="r-label" style="color:var(--red);">Informações em falta</div>${p.faltando.map(x=>`<div class="missing-box">${x}</div>`).join('')}</div>`:'';
   const obsH=a.obs&&a.obs.trim().length>3?`<hr class="divider"><div><div class="r-label">Observações adicionais</div><div class="r-val">${a.obs}</div></div>`:'';
+  const linksH=a.links&&a.links.trim().length>3?`<hr class="divider"><div><div class="r-label">Referências e materiais</div><div class="r-val" style="font-size:14px;white-space:pre-line;">${a.links}</div></div>`:'';
 
   const resultHtml=`
 <div class="result-card">
@@ -540,6 +546,7 @@ function renderResult(){
     ${alertsH}
   </div>
   ${missingH}
+  ${linksH}
   ${obsH}
   <hr class="divider">
   <div><div class="r-label">O que acontece agora</div>
@@ -575,7 +582,7 @@ function enviarBriefing(){
     id,timestamp:Date.now(),hoje,
     nome:a.nome,objetivo:a.objetivo,
     script:a.script,video:a.video,pessoas:a.pessoas,
-    motion:a.motion,ia:a.ia,prazo:a.prazo,obs:a.obs||'',
+    motion:a.motion,ia:a.ia,prazo:a.prazo,obs:a.obs||'',links:a.links||'',
     minH:p.minH,maxH:p.maxH,diasMin:p.diasMin,diasMax:p.diasMax,
     gargalo:p.gargalo,alertas:p.alertas,faltando:p.faltando,
     entregaStr:entrega.hasAgenda?(entrega.agendaInsuficiente?'Agenda insuficiente':entrega.endDateStr):'Sem agenda configurada',
